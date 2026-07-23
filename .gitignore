@@ -1,0 +1,28 @@
+# Python-generated files
+__pycache__/
+.ipynb_checkpoints
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+.env
+venv/
+ENV/
+env/
+
+
+data/
+
+## Git command to untrack folder that are already tracked
+# git rm -r --cached data/
+# 
+
+
+github_key
+github_key.pub
+key
+key.pub
