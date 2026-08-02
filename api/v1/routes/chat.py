@@ -1,87 +1,69 @@
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-from chat_application.client import (
-    ChatRequest,
-    ChatResponse,
-    handle_chat_message,
-    handle_chat_stream,
-)
-from fastapi import Query
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
+from chat_application.client import handle_chat_stream, handle_chat_message
+from models.chat import ChatRequest, ChatResponse
+from jose import JWTError, jwt
+from core.security import JWT_SECRET, JWT_ALGORITHM
+from core.database import users_collection
 
 router = APIRouter(
     prefix="/chat",
     tags=["Chat"],
 )
 
-@router.post(
-    "",
-    response_model=ChatResponse,
-)
+# POST endpoint (unchanged)
+@router.post("")
 async def chat(request: ChatRequest):
-
     response = await handle_chat_message(
-        session_id=request.session_id,
-        user_input=request.message,
+        session_id=request.session_id, # type: ignore
+        user_input=request.prompt,
     )
-
     return ChatResponse(
         response=response,
         session_id=request.session_id,
     )
 
-
-# @router.websocket("/ws")
-# async def websocket_chat(websocket: WebSocket):
-
-#     await websocket.accept()
-
-#     try:
-
-#         while True:
-
-#             data = await websocket.receive_json()
-
-#             session_id = data.get("session_id", "default")
-#             message = data.get("message", "")
-
-#             async for token in handle_chat_stream(
-#                 session_id=session_id,
-#                 user_input=message,
-#             ):
-
-#                 await websocket.send_json(
-#                     {
-#                         "type": "token",
-#                         "content": token,
-#                     }
-#                 )
-
-#             await websocket.send_json(
-#                 {
-#                     "type": "done"
-#                 }
-#             )
-
-#     except WebSocketDisconnect:
-#         print("Client disconnected")
-
+# WebSocket endpoint – now at "/api/v1/chat"
 @router.websocket("")
 async def websocket_chat(
     websocket: WebSocket,
-    session_id: str = Query(...)
+    token: str = Query(...)
 ):
-    await websocket.accept()
+    print(f"🔑 Received token (first 20 chars): {token[:20]}...")
 
-    print(f"Connected: {session_id}")
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        print(f"✅ Decoded payload: {payload}")
+
+        email = payload.get("email")
+        if not email:
+            print("❌ No 'email' claim in token")
+            await websocket.close(code=1008, reason="Invalid token payload")
+            return
+
+        user = users_collection.find_one({"email": email})
+        if not user:
+            print(f"❌ User not found for email: {email}")
+            await websocket.close(code=1008, reason="User not found")
+            return
+
+        print(f"✅ User authenticated: {email}")
+
+    except JWTError as e:
+        print(f"❌ JWT decode error: {e}")
+        await websocket.close(code=1008, reason="Invalid token")
+        return
+
+    await websocket.accept()
+    session_id = str(user["_id"])
+    print(f"🔌 WebSocket connected: session_id={session_id}, user={email}")
 
     try:
         while True:
             message = await websocket.receive_text()
-
             async for chunk in handle_chat_stream(
                 session_id=session_id,
-                user_input=message,
+                user_input=message
             ):
                 await websocket.send_text(chunk)
-
     except WebSocketDisconnect:
-        print(f"Disconnected: {session_id}")
+        print(f"🔌 Disconnected: session_id={session_id}")

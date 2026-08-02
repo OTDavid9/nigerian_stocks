@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from api.v1.routes.stocks import router as stock_router
 from api.v1.routes.chat import router as chat_router
 from api.v1.routes.page import router as page_router
+from api.v1.routes.auth import router as auth_router
+from api.v1.routes.upload import router as upload_router
 import httpx
 
 app = FastAPI(title="NGX Market API", version="1.0.0")
@@ -25,8 +27,9 @@ client = httpx.AsyncClient(timeout=60.0)
 async def shutdown():
     await client.aclose()
 
+app.include_router(auth_router)
 app.include_router(page_router,  tags=["Pages"])
 app.include_router(stock_router, prefix="/api/v1")
-app.include_router(chat_router, prefix="/api/v1",  tags=["Chat"],
-)
+app.include_router(chat_router, prefix="/api/v1",  tags=["Chat"],)
+app.include_router(upload_router, prefix="/api/v1")
 
