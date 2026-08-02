@@ -1,0 +1,3039 @@
+Document: MIT_8301_Machine_Learning_and_AI_Fundamentals_(Virtual_lab)_Tunji_David_Obidokun.pdf
+Type: .pdf
+==================================================
+
+MIT 8301 - Machine Learning and AI Fundamentals
+1. Name: Tunji David Obidokun
+2. Registration Number: 301805735
+3. Matric Number: 2025/A/MIT/0075
+4. Email: t.obidokun5735@miva.edu.ng
+ 
+Packages Installation
+In [ ]:
+!pip install ucimlrepo --q
+print("Packages installed successfully !")
+Packages installed successfully !
+In
+[219]:
+from ucimlrepo import fetch_ucirepo
+# fetch dataset
+statlog_german_credit_data = fetch_ucirepo(id=144)
+# data (as pandas dataframes)
+X = statlog_german_credit_data.data.features
+y = statlog_german_credit_data.data.targets
+# metadata
+print(statlog_german_credit_data.metadata['repository_url'])
+https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+1/64
+In [ ]:
+# variable information
+print(statlog_german_credit_data.variables)
+           name     role         type     demographic  \
+0    Attribute1  Feature  Categorical            None   
+1    Attribute2  Feature      Integer            None   
+2    Attribute3  Feature  Categorical            None   
+3    Attribute4  Feature  Categorical            None   
+4    Attribute5  Feature      Integer            None   
+5    Attribute6  Feature  Categorical            None   
+6    Attribute7  Feature  Categorical           Other   
+7    Attribute8  Feature      Integer            None   
+8    Attribute9  Feature  Categorical  Marital Status   
+9   Attribute10  Feature  Categorical            None   
+10  Attribute11  Feature      Integer            None   
+11  Attribute12  Feature  Categorical            None   
+12  Attribute13  Feature      Integer             Age   
+13  Attribute14  Feature  Categorical            None   
+14  Attribute15  Feature  Categorical           Other   
+15  Attribute16  Feature      Integer            None   
+16  Attribute17  Feature  Categorical      Occupation   
+17  Attribute18  Feature      Integer            None   
+18  Attribute19  Feature       Binary            None   
+19  Attribute20  Feature       Binary           Other   
+20        class   Target       Binary            None   
+                                          description   units missing_values  
+0                 Status of existing checking account    None             no  
+1                                            Duration  months             no  
+2                                      Credit history    None             no  
+3                                             Purpose    None             no  
+4                                       Credit amount    None             no  
+5                               Savings account/bonds    None             no  
+6                            Present employment since    None             no  
+7   Installment rate in percentage of disposable i...    None             no  
+8                             Personal status and sex    None             no  
+9                          Other debtors / guarantors    None             no  
+10                            Present residence since    None             no  
+11                                           Property    None             no  
+12                                                Age   years             no  
+13                            Other installment plans    None             no  
+14                                            Housing    None             no  
+15            Number of existing credits at this bank    None             no  
+16                                                Job    None             no  
+17  Number of people being liable to provide maint...    None             no  
+18                                          Telephone    None             no  
+19                                     foreign worker    None             no  
+20                                  1 = Good, 2 = Bad    None             no  
+ 
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+2/64
+ 
+1. Data Loading & EDA
+In [ ]:
+import pandas as pd
+# df = pd.read_csv("german_Credit_data.csv")
+# df.head()
+data_file_url_path = "https://archive.ics.uci.edu/static/public/144/data.csv" # Url is from the datase metadata
+df = pd.read_csv(data_file_url_path)
+df.head()
+
+
+Attribute1
+Attribute2
+Attribute3
+Attribute4
+Attribute5
+Attribute6
+Attribute7
+Attribute8
+Attribute9
+Attribute10
+...
+Attribute12
+Attribute13
+Attribute14
+Attribute15
+Attribute16
+0
+A11
+6
+A34
+A43
+1169
+A65
+A75
+4
+A93
+A101
+...
+A121
+67
+A143
+A152
+2
+1
+A12
+48
+A32
+A43
+5951
+A61
+A73
+2
+A92
+A101
+...
+A121
+22
+A143
+A152
+1
+2
+A14
+12
+A34
+A46
+2096
+A61
+A74
+2
+A93
+A101
+...
+A121
+49
+A143
+A152
+1
+3
+A11
+42
+A32
+A42
+7882
+A61
+A74
+2
+A93
+A103
+...
+A122
+45
+A143
+A153
+1
+4
+A11
+24
+A33
+A40
+4870
+A61
+A73
+3
+A93
+A101
+...
+A124
+53
+A143
+A153
+2
+5 rows × 21 columns
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+3/64
+In [ ]:
+df.info()
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 1000 entries, 0 to 999
+Data columns (total 21 columns):
+ #   Column       Non-Null Count  Dtype 
+---  ------       --------------  ----- 
+ 0   Attribute1   1000 non-null   object
+ 1   Attribute2   1000 non-null   int64 
+ 2   Attribute3   1000 non-null   object
+ 3   Attribute4   1000 non-null   object
+ 4   Attribute5   1000 non-null   int64 
+ 5   Attribute6   1000 non-null   object
+ 6   Attribute7   1000 non-null   object
+ 7   Attribute8   1000 non-null   int64 
+ 8   Attribute9   1000 non-null   object
+ 9   Attribute10  1000 non-null   object
+ 10  Attribute11  1000 non-null   int64 
+ 11  Attribute12  1000 non-null   object
+ 12  Attribute13  1000 non-null   int64 
+ 13  Attribute14  1000 non-null   object
+ 14  Attribute15  1000 non-null   object
+ 15  Attribute16  1000 non-null   int64 
+ 16  Attribute17  1000 non-null   object
+ 17  Attribute18  1000 non-null   int64 
+ 18  Attribute19  1000 non-null   object
+ 19  Attribute20  1000 non-null   object
+ 20  class        1000 non-null   int64 
+dtypes: int64(8), object(13)
+memory usage: 164.2+ KB
+In [ ]:
+df.shape
+(1000, 21)
+In [ ]:
+df.head()
+
+
+checking_account_status
+duration_months
+credit_history
+purpose
+credit_amount
+savings_account
+employment_since
+installment_rate
+personal_status_sex
+other_debtors
+...
+property
+a
+0
+A11
+6
+A34
+A43
+1169
+A65
+A75
+4
+A93
+A101
+...
+A121
+6
+1
+A12
+48
+A32
+A43
+5951
+A61
+A73
+2
+A92
+A101
+...
+A121
+2
+2
+A14
+12
+A34
+A46
+2096
+A61
+A74
+2
+A93
+A101
+...
+A121
+4
+3
+A11
+42
+A32
+A42
+7882
+A61
+A74
+2
+A93
+A103
+...
+A122
+4
+4
+A11
+24
+A33
+A40
+4870
+A61
+A73
+3
+A93
+A101
+...
+A124
+5
+5 rows × 21 columns
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+4/64
+ 
+Transforming the symbolic dataset to meaningful data, using the documentation.
+In [ ]:
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+5/64
+In [ ]:
+documentation ="""
+# South German Credit Dataset
+## Description
+The South German Credit dataset is a modified version of the German Credit dataset from the Statlog project. It contains information about 1,000 loan applicants and is commonly used for 
+credit risk analysis.
+## Target Variable
+- credit_risk
+  - 1: Good credit risk
+  - 0: Bad credit risk
+## Features
+| Column | Description |
+|----------|-------------|
+| checking_account_status | Status of checking account |
+| duration_months | Duration of credit in months |
+| credit_history | Previous credit history |
+| purpose | Purpose of the loan |
+| credit_amount | Amount of credit requested |
+| savings_account | Savings account status |
+| employment_duration | Length of employment |
+| installment_rate | Installment rate as percentage of income |
+| personal_status_sex | Personal status and sex |
+| other_debtors_guarantors | Other debtors or guarantors |
+| residence_duration | Years at current residence |
+| property | Property or assets owned |
+| age | Age in years |
+| other_installment_plans | Other installment plans |
+| housing | Housing status |
+| existing_credits | Number of existing credits |
+| job | Occupation category |
+| dependents | Number of dependents |
+| telephone | Telephone ownership |
+| foreign_worker | Foreign worker status |
+| credit_risk | Target variable |
+## Source
+- UCI Machine Learning Repository
+## Number of Records
+- 1,000 observations
+## Number of Variables
+- 20 features
+- 1 target variable
+"""
+with open("README.md", "w") as f:
+    f.write(documentation)
+In [ ]:
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+6/64
+In [ ]:
+import pandas as pd
+# df = pd.read_csv("german.data", sep=r"\s+", header=None)
+df.head()
+
+
+Attribute1
+Attribute2
+Attribute3
+Attribute4
+Attribute5
+Attribute6
+Attribute7
+Attribute8
+Attribute9
+Attribute10
+...
+Attribute12
+Attribute13
+Attribute14
+Attribute15
+Attribute16
+0
+A11
+6
+A34
+A43
+1169
+A65
+A75
+4
+A93
+A101
+...
+A121
+67
+A143
+A152
+2
+1
+A12
+48
+A32
+A43
+5951
+A61
+A73
+2
+A92
+A101
+...
+A121
+22
+A143
+A152
+1
+2
+A14
+12
+A34
+A46
+2096
+A61
+A74
+2
+A93
+A101
+...
+A121
+49
+A143
+A152
+1
+3
+A11
+42
+A32
+A42
+7882
+A61
+A74
+2
+A93
+A103
+...
+A122
+45
+A143
+A153
+1
+4
+A11
+24
+A33
+A40
+4870
+A61
+A73
+3
+A93
+A101
+...
+A124
+53
+A143
+A153
+2
+5 rows × 21 columns
+ 
+  Creating columns names for the symbolic data from the documentation
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+7/64
+In [ ]:
+import pandas as pd
+column_names = [
+    "checking_account_status",      # Attribute 1
+    "duration_months",              # Attribute 2
+    "credit_history",               # Attribute 3
+    "purpose",                      # Attribute 4
+    "credit_amount",                # Attribute 5
+    "savings_account",              # Attribute 6
+    "employment_since",             # Attribute 7
+    "installment_rate",             # Attribute 8
+    "personal_status_sex",          # Attribute 9
+    "other_debtors",                # Attribute 10
+    "residence_since",              # Attribute 11
+    "property",                     # Attribute 12
+    "age",                          # Attribute 13
+    "other_installment_plans",      # Attribute 14
+    "housing",                      # Attribute 15
+    "existing_credits",             # Attribute 16
+    "job",                          # Attribute 17
+    "dependents",                   # Attribute 18
+    "telephone",                    # Attribute 19
+    "foreign_worker",               # Attribute 20
+    "credit_risk"                        # Class label / target
+]
+# Load the dataset
+df = pd.read_csv(
+    "german.data",
+    sep=r"\s+",          # dataset is space-separated
+    header=None,
+    names=column_names
+)
+# View first rows
+df.head()
+
+
+checking_account_status
+duration_months
+credit_history
+purpose
+credit_amount
+savings_account
+employment_since
+installment_rate
+personal_status_sex
+other_debtors
+...
+property
+a
+0
+A11
+6
+A34
+A43
+1169
+A65
+A75
+4
+A93
+A101
+...
+A121
+6
+1
+A12
+48
+A32
+A43
+5951
+A61
+A73
+2
+A92
+A101
+...
+A121
+2
+2
+A14
+12
+A34
+A46
+2096
+A61
+A74
+2
+A93
+A101
+...
+A121
+4
+3
+A11
+42
+A32
+A42
+7882
+A61
+A74
+2
+A93
+A103
+...
+A122
+4
+4
+A11
+24
+A33
+A40
+4870
+A61
+A73
+3
+A93
+A101
+...
+A124
+5
+5 rows × 21 columns
+  Mapping the actual data point values for the symbolic dataset
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+8/64
+In [ ]:
+# Attribute 1: Status of existing checking account
+checking_account_map = {
+    "A11": "< 0 DM",
+    "A12": "0 <= balance < 200 DM",
+    "A13": ">= 200 DM",
+    "A14": "No checking account"
+}
+# Attribute 3: Credit history
+credit_history_map = {
+    "A30": "No credits taken / all paid back",
+    "A31": "All credits paid back duly",
+    "A32": "Existing credits paid back duly till now",
+    "A33": "Delay in paying in the past",
+    "A34": "Critical account / other credits"
+}
+# Attribute 4: Purpose
+purpose_map = {
+    "A40": "New car",
+    "A41": "Used car",
+    "A42": "Furniture/equipment",
+    "A43": "Radio/TV",
+    "A44": "Domestic appliances",
+    "A45": "Repairs",
+    "A46": "Education",
+    "A48": "Retraining",
+    "A49": "Business",
+    "A410": "Others"
+}
+# Attribute 6: Savings account
+savings_map = {
+    "A61": "<100 DM",
+    "A62": "100-500 DM",
+    "A63": "500-1000 DM",
+    "A64": ">=1000 DM",
+    "A65": "Unknown / no savings"
+}
+# Attribute 7: Employment duration
+employment_map = {
+    "A71": "Unemployed",
+    "A72": "<1 year",
+    "A73": "1-4 years",
+    "A74": "4-7 years",
+    "A75": ">=7 years"
+}
+# Attribute 9: Personal status and sex
+personal_status_map = {
+    "A91": "Male divorced/separated",
+    "A92": "Female divorced/separated/married",
+    "A93": "Male single",
+    "A94": "Male married/widowed",
+    "A95": "Female single"
+}
+# Attribute 10: Other debtors
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+9/64
+other_debtors_map = {
+    "A101": "None",
+    "A102": "Co-applicant",
+    "A103": "Guarantor"
+}
+# Attribute 12: Property
+property_map = {
+    "A121": "Real estate",
+    "A122": "Life insurance",
+    "A123": "Car or other",
+    "A124": "Unknown/no property"
+}
+# Attribute 14: Other installment plans
+installment_plan_map = {
+    "A141": "Bank",
+    "A142": "Stores",
+    "A143": "None"
+}
+# Attribute 15: Housing
+housing_map = {
+    "A151": "Rent",
+    "A152": "Own",
+    "A153": "Free"
+}
+# Attribute 17: Job
+job_map = {
+    "A171": "Unemployed/unskilled non-resident",
+    "A172": "Unskilled resident",
+    "A173": "Skilled employee",
+    "A174": "Management/self-employed"
+}
+# Attribute 19: Telephone
+telephone_map = {
+    "A191": "No",
+    "A192": "Yes"
+}
+# Attribute 20: Foreign worker
+foreign_worker_map = {
+    "A201": "Yes",
+    "A202": "No"
+}
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+10/64
+In [ ]:
+df["checking_account_status"] = df["checking_account_status"].map(checking_account_map)
+df["credit_history"] = df["credit_history"].map(credit_history_map)
+df["purpose"] = df["purpose"].map(purpose_map)
+df["savings_account"] = df["savings_account"].map(savings_map)
+df["employment_since"] = df["employment_since"].map(employment_map)
+df["personal_status_sex"] = df["personal_status_sex"].map(personal_status_map)
+df["other_debtors"] = df["other_debtors"].map(other_debtors_map)
+df["property"] = df["property"].map(property_map)
+df["other_installment_plans"] = df["other_installment_plans"].map(installment_plan_map)
+df["housing"] = df["housing"].map(housing_map)
+df["job"] = df["job"].map(job_map)
+df["telephone"] = df["telephone"].map(telephone_map)
+df["foreign_worker"] = df["foreign_worker"].map(foreign_worker_map)
+In [ ]:
+df["credit_risk"] = df["credit_risk"].map({
+    1: "Good Credit",
+    2: "Bad Credit"
+})
+In [ ]:
+df.info()
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 1000 entries, 0 to 999
+Data columns (total 21 columns):
+ #   Column                   Non-Null Count  Dtype 
+---  ------                   --------------  ----- 
+ 0   checking_account_status  1000 non-null   object
+ 1   duration_months          1000 non-null   int64 
+ 2   credit_history           1000 non-null   object
+ 3   purpose                  1000 non-null   object
+ 4   credit_amount            1000 non-null   int64 
+ 5   savings_account          1000 non-null   object
+ 6   employment_since         1000 non-null   object
+ 7   installment_rate         1000 non-null   int64 
+ 8   personal_status_sex      1000 non-null   object
+ 9   other_debtors            1000 non-null   object
+ 10  residence_since          1000 non-null   int64 
+ 11  property                 1000 non-null   object
+ 12  age                      1000 non-null   int64 
+ 13  other_installment_plans  1000 non-null   object
+ 14  housing                  1000 non-null   object
+ 15  existing_credits         1000 non-null   int64 
+ 16  job                      1000 non-null   object
+ 17  dependents               1000 non-null   int64 
+ 18  telephone                1000 non-null   object
+ 19  foreign_worker           1000 non-null   object
+ 20  credit_risk              1000 non-null   object
+dtypes: int64(7), object(14)
+memory usage: 164.2+ KB
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+11/64
+In [ ]:
+df.head()
+
+
+checking_account_status
+duration_months
+credit_history
+purpose
+credit_amount
+savings_account
+employment_since
+installment_rate
+personal_status_sex
+other_debtors
+0
+< 0 DM
+6
+Critical
+account /
+other credits
+Radio/TV
+1169
+Unknown / no
+savings
+>=7 years
+4
+Male single
+None
+1
+0 <= balance < 200 DM
+48
+Existing
+credits paid
+back duly till
+now
+Radio/TV
+5951
+<100 DM
+1-4 years
+2
+Female
+divorced/separated/married
+None
+2
+No checking account
+12
+Critical
+account /
+other credits
+Education
+2096
+<100 DM
+4-7 years
+2
+Male single
+None
+3
+< 0 DM
+42
+Existing
+credits paid
+back duly till
+now
+Furniture/equipment
+7882
+<100 DM
+4-7 years
+2
+Male single
+Guarantor
+4
+< 0 DM
+24
+Delay in
+paying in the
+past
+New car
+4870
+<100 DM
+1-4 years
+3
+Male single
+None
+5 rows × 21 columns
+In [ ]:
+df.shape
+(1000, 21)
+  #Exploratory Data Analysis (EDA)
+ 
+Dataset Shape
+In [ ]:
+print(df.shape, "\n")
+f'There are {df.shape[0]} rows and {df.shape[1]} columns in the datasets'
+(1000, 21) 
+'There are 1000 rows and 21 columns in the datasets'
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+12/64
+ 
+Columns Name of the dataset
+In [ ]:
+for i in range(len(df.columns)):
+    print(f"Column {i+1}: {df.columns[i]}")
+Column 1: checking_account_status
+Column 2: duration_months
+Column 3: credit_history
+Column 4: purpose
+Column 5: credit_amount
+Column 6: savings_account
+Column 7: employment_since
+Column 8: installment_rate
+Column 9: personal_status_sex
+Column 10: other_debtors
+Column 11: residence_since
+Column 12: property
+Column 13: age
+Column 14: other_installment_plans
+Column 15: housing
+Column 16: existing_credits
+Column 17: job
+Column 18: dependents
+Column 19: telephone
+Column 20: foreign_worker
+Column 21: credit_risk
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+13/64
+ 
+Data Types of Each Column in the dataset
+In [ ]:
+print(df.dtypes)
+checking_account_status    object
+duration_months             int64
+credit_history             object
+purpose                    object
+credit_amount               int64
+savings_account            object
+employment_since           object
+installment_rate            int64
+personal_status_sex        object
+other_debtors              object
+residence_since             int64
+property                   object
+age                         int64
+other_installment_plans    object
+housing                    object
+existing_credits            int64
+job                        object
+dependents                  int64
+telephone                  object
+foreign_worker             object
+credit_risk                object
+dtype: object
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+14/64
+ 
+Dataset Information
+In [ ]:
+df.info()
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 1000 entries, 0 to 999
+Data columns (total 21 columns):
+ #   Column                   Non-Null Count  Dtype 
+---  ------                   --------------  ----- 
+ 0   checking_account_status  1000 non-null   object
+ 1   duration_months          1000 non-null   int64 
+ 2   credit_history           1000 non-null   object
+ 3   purpose                  1000 non-null   object
+ 4   credit_amount            1000 non-null   int64 
+ 5   savings_account          1000 non-null   object
+ 6   employment_since         1000 non-null   object
+ 7   installment_rate         1000 non-null   int64 
+ 8   personal_status_sex      1000 non-null   object
+ 9   other_debtors            1000 non-null   object
+ 10  residence_since          1000 non-null   int64 
+ 11  property                 1000 non-null   object
+ 12  age                      1000 non-null   int64 
+ 13  other_installment_plans  1000 non-null   object
+ 14  housing                  1000 non-null   object
+ 15  existing_credits         1000 non-null   int64 
+ 16  job                      1000 non-null   object
+ 17  dependents               1000 non-null   int64 
+ 18  telephone                1000 non-null   object
+ 19  foreign_worker           1000 non-null   object
+ 20  credit_risk              1000 non-null   object
+dtypes: int64(7), object(14)
+memory usage: 164.2+ KB
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+15/64
+ 
+Descriptive Statistics
+ 
+Descriptive Statistics for Numerical Features
+In [ ]:
+df.describe()
+duration_months
+credit_amount
+installment_rate
+residence_since
+age
+existing_credits
+dependents
+count
+1000.000000
+1000.000000
+1000.000000
+1000.000000
+1000.000000
+1000.000000
+1000.000000
+mean
+20.903000
+3271.258000
+2.973000
+2.845000
+35.546000
+1.407000
+1.155000
+std
+12.058814
+2822.736876
+1.118715
+1.103718
+11.375469
+0.577654
+0.362086
+min
+4.000000
+250.000000
+1.000000
+1.000000
+19.000000
+1.000000
+1.000000
+25%
+12.000000
+1365.500000
+2.000000
+2.000000
+27.000000
+1.000000
+1.000000
+50%
+18.000000
+2319.500000
+3.000000
+3.000000
+33.000000
+1.000000
+1.000000
+75%
+24.000000
+3972.250000
+4.000000
+4.000000
+42.000000
+2.000000
+1.000000
+max
+72.000000
+18424.000000
+4.000000
+4.000000
+75.000000
+4.000000
+2.000000
+ 
+Descriptive Statistics for Categorical Features
+In [ ]:
+df.describe(include='object')
+
+
+checking_account_status
+credit_history
+purpose
+savings_account
+employment_since
+personal_status_sex
+other_debtors
+property
+other_installment_plans
+housing
+job
+teleph
+count
+1000
+1000
+1000
+1000
+1000
+1000
+1000
+1000
+1000
+1000
+1000
+1000
+unique
+4
+5
+10
+5
+5
+4
+3
+4
+3
+3
+4
+2
+top
+No checking account
+Existing
+credits paid
+back duly till
+now
+Radio/TV
+<100 DM
+1-4 years
+Male single
+None
+Car or
+other
+None
+Own
+Skilled
+employee
+No
+freq
+394
+530
+280
+603
+339
+548
+907
+332
+814
+713
+630
+596
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+16/64
+ 
+Check Missing Values
+ 
+Missing Values
+In [ ]:
+missing_values = df.isnull().sum()
+print("Missing values:")
+print(missing_values)
+Missing values:
+checking_account_status    0
+duration_months            0
+credit_history             0
+purpose                    0
+credit_amount              0
+savings_account            0
+employment_since           0
+installment_rate           0
+personal_status_sex        0
+other_debtors              0
+residence_since            0
+property                   0
+age                        0
+other_installment_plans    0
+housing                    0
+existing_credits           0
+job                        0
+dependents                 0
+telephone                  0
+foreign_worker             0
+credit_risk                0
+dtype: int64
+ 
+4. Target Balance
+In [ ]:
+print(df['credit_risk'].value_counts())
+credit_risk
+Good Credit    700
+Bad Credit     300
+Name: count, dtype: int64
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+17/64
+In [ ]:
+import matplotlib.pyplot as plt
+df['credit_risk'].value_counts().plot(
+    kind='bar'
+)
+plt.xlabel("Credit Risk")
+plt.ylabel("Count")
+plt.title("Distribution of Credit Risk")
+plt.show()
+  Hofmann, H. (1994). Statlog (German Credit Data) [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5NC77.
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+18/64
+ 
+Identify Numerical and Categorical Features
+In [ ]:
+numerical_features = df.select_dtypes(
+    include=['int64', 'float64']
+).columns
+categorical_features = df.select_dtypes(
+    include=['object']
+).columns
+print("Numerical Features:", "\n")
+for i in range(len(numerical_features)):
+    print(f"Column {i+1}: {numerical_features[i]}")
+print()
+print("Categorical Features:",  "\n")
+for i in range(len(categorical_features)):
+    print(f"Column {i+1}: {categorical_features[i]}")
+Numerical Features: 
+Column 1: duration_months
+Column 2: credit_amount
+Column 3: installment_rate
+Column 4: residence_since
+Column 5: age
+Column 6: existing_credits
+Column 7: dependents
+Categorical Features: 
+Column 1: checking_account_status
+Column 2: credit_history
+Column 3: purpose
+Column 4: savings_account
+Column 5: employment_since
+Column 6: personal_status_sex
+Column 7: other_debtors
+Column 8: property
+Column 9: other_installment_plans
+Column 10: housing
+Column 11: job
+Column 12: telephone
+Column 13: foreign_worker
+Column 14: credit_risk
+In [ ]:
+#
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+19/64
+ 
+Histogram of Numerical Features
+In [ ]:
+df[numerical_features].hist(
+    figsize=(15,10),
+    bins=20
+)
+plt.tight_layout()
+plt.show()
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+20/64
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+21/64
+ 
+2. Handling Missing Values & Outliers
+In [ ]:
+missing_values = df.isnull().sum()
+print("Missing values:")
+print(missing_values)
+Missing values:
+checking_account_status    0
+duration_months            0
+credit_history             0
+purpose                    0
+credit_amount              0
+savings_account            0
+employment_since           0
+installment_rate           0
+personal_status_sex        0
+other_debtors              0
+residence_since            0
+property                   0
+age                        0
+other_installment_plans    0
+housing                    0
+existing_credits           0
+job                        0
+dependents                 0
+telephone                  0
+foreign_worker             0
+credit_risk                0
+dtype: int64
+  According to the dataset documentation, there are no missing values. The values like "Unknown / no savings" are treated as seperate category and not as missing values.
+The dataset was examined for missing values using isnull(). No missing values were found in any of the variables; therefore, no imputation or row removal was required.
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+22/64
+ 
+Correlation Analysis
+In [ ]:
+import seaborn as sns
+corr_matrix = df[numerical_features].corr()
+plt.figure(figsize=(8,6))
+sns.heatmap(
+    corr_matrix,
+    annot=True,
+    cmap='coolwarm',
+    fmt='.2f'
+)
+plt.title("Correlation Matrix")
+plt.show()
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+23/64
+ 
+Age Distribution
+In [ ]:
+plt.figure(figsize=(8,5))
+sns.histplot(
+    df['age'],
+    bins=20,
+    kde=True
+)
+plt.title("Age Distribution")
+plt.xlabel("Age")
+plt.show()
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+24/64
+ 
+Credit Amount Distribution
+In [ ]:
+plt.figure(figsize=(8,5))
+sns.histplot(
+    df['credit_amount'],
+    bins=20,
+    kde=True
+)
+plt.title("Credit Amount Distribution")
+plt.xlabel("Credit Amount")
+plt.show()
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+25/64
+In [ ]:
+plt.figure(figsize=(8,5))
+sns.boxplot(
+    x='credit_risk',
+    y='credit_amount',
+    data=df
+)
+plt.title("Credit Amount vs Credit Risk")
+plt.show()
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+26/64
+In [ ]:
+plt.figure(figsize=(8,5))
+sns.boxplot(
+    x='credit_risk',
+    y='age',
+    data=df
+)
+plt.title("Age Distribution by Credit Risk")
+plt.show()
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+27/64
+In [ ]:
+plt.figure(figsize=(10,5))
+sns.countplot(
+    y='purpose',
+    data=df,
+    order=df['purpose'].value_counts().index
+)
+plt.title("Loan Purposes")
+plt.show()
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+28/64
+In [ ]:
+plt.figure(figsize=(10,5))
+sns.countplot(
+    y='credit_history',
+    data=df,
+    order=df['credit_history'].value_counts().index
+)
+plt.title("Credit History")
+plt.show()
+ 
+Insights from EDA
+1. The dataset contains 1000 observations and 21 variables, including the target variable.
+2. There are both categorical and numerical features.
+3. The target classes are moderately imbalanced, with approximately 70% good credit and 30% bad credit.
+4. No missing values were observed.
+5. Credit amount and loan duration exhibit several outliers.
+6. Most customers are between 20 and 50 years old.
+7. Radio/TV and car purchases constitute a large proportion of loan purposes
+8. The numerical features show generally weak correlations, indicating limited multicollinearity.
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+29/64
+ 
+Detect Outliers Using IQR
+In [ ]:
+import pandas as pd
+# Select numerical columns
+numerical_features = df.select_dtypes(include=["int64", "float64"]).columns
+def detect_outliers_iqr(data):
+    outlier_summary = []
+    for column in numerical_features:
+        Q1 = data[column].quantile(0.25)
+        Q3 = data[column].quantile(0.75)
+        IQR = Q3 - Q1
+        lower_bound = Q1 - 1.5 * IQR
+        upper_bound = Q3 + 1.5 * IQR
+        outliers = data[
+            (data[column] < lower_bound) |
+            (data[column] > upper_bound)
+        ]
+        outlier_summary.append({
+            "Feature": column,
+            "Number of Outliers": len(outliers),
+            "Lower Bound": round(lower_bound, 2),
+            "Upper Bound": round(upper_bound, 2)
+        })
+    return pd.DataFrame(outlier_summary)
+# Display outlier summary
+outlier_report = detect_outliers_iqr(df)
+outlier_report
+Feature
+Number of Outliers
+Lower Bound
+Upper Bound
+0
+duration_months
+70
+-6.00
+42.00
+1
+credit_amount
+72
+-2544.62
+7882.38
+2
+installment_rate
+0
+-1.00
+7.00
+3
+residence_since
+0
+-1.00
+7.00
+4
+age
+23
+4.50
+64.50
+5
+existing_credits
+6
+-0.50
+3.50
+6
+dependents
+155
+1.00
+1.00
+  #Detect Outliers Visually (Boxplots)
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+30/64
+In [ ]:
+import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
+# Loop through each numerical feature
+for column in numerical_features:
+    plt.figure(figsize=(6, 4))
+    # Customize outliers
+    flierprops = dict(
+        marker='o',
+        markerfacecolor='red',
+        markeredgecolor='red',
+        markersize=6,
+        linestyle='none'
+    )
+    # Create boxplot
+    plt.boxplot(
+        df[column],
+        vert=True,
+        patch_artist=True,
+        flierprops=flierprops
+    )
+    # Titles and labels
+    plt.title(f"Boxplot of {column.replace('_', ' ').title()}")
+    plt.ylabel(column.replace('_', ' ').title())
+    # Create legend
+    legend = [
+        Line2D(
+            [0], [0],
+            marker='o',
+            color='w',
+            markerfacecolor='red',
+            markeredgecolor='red',
+            markersize=8,
+            label='Outliers'
+        )
+    ]
+    plt.legend(handles=legend, loc='upper right')
+    plt.grid(axis='y', linestyle='--', alpha=0.5)
+    plt.tight_layout()
+    plt.show()
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+31/64
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+32/64
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+33/64
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+34/64
+ 
+Capping/Transformation.
+ 
+Capping
+In [ ]:
+# Make a copy of the dataset
+df_processed = df.copy()
+# Features to cap
+features_to_cap = ["duration_months", "age"]
+for column in features_to_cap:
+    Q1 = df_processed[column].quantile(0.25)
+    Q3 = df_processed[column].quantile(0.75)
+    IQR = Q3 - Q1
+    lower = Q1 - 1.5 * IQR
+    upper = Q3 + 1.5 * IQR
+    df_processed[column] = df_processed[column].clip(lower=lower, upper=upper)
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+35/64
+ 
+Log Transformation
+In [ ]:
+import numpy as np
+# Apply log transformation to reduce skewness
+df_processed["credit_amount"] = np.log1p(df_processed["credit_amount"])
+In [ ]:
+outlier_report_after = detect_outliers_iqr(df_processed)
+outlier_report_after
+Feature
+Number of Outliers
+Lower Bound
+Upper Bound
+0
+duration_months
+0
+-6.00
+42.00
+1
+credit_amount
+1
+5.62
+9.89
+2
+installment_rate
+0
+-1.00
+7.00
+3
+residence_since
+0
+-1.00
+7.00
+4
+age
+0
+4.50
+64.50
+5
+existing_credits
+6
+-0.50
+3.50
+6
+dependents
+155
+1.00
+1.00
+ 
+Note of Outlier Dectection, Resolution and Justification
+  I first identified the outliers by applying the IQR method and visualizing them using boxplot. Instead of applying single method to all the numerical features, I decided to deal with the outliers in each feature by feature. This
+approach helped in retaining meaningful information while reducing the effect of extremely high values which could negatively impact the performance of the models.
+1. Duration (Months): We first detected 70 outliers, and since it is a continuous numerical variable, high values of loan duration would skew the ML model ,we used winsorisation by applying IQR based capping on the
+duration to restrict the range of large values. There were no outliers after pre-processing.
+2. Credit Amount: We detected 72 outliers which is evident by the right skewness of credit amounts. We decided to apply log transformation (log1p) on the feature in order to reduce the skewness of the distribution by
+shrinking the large values to prevent them from affecting the model without changing their ranking. After log transformation we observed that the number of outliers reduced to 1 which we decided to keep as it represents
+a high amount credit rather than an error.
+3. Installment Rate: There were no outliers in this feature and thus we didn’t perform any pre-processing.
+4. Residence Since: There were no outliers after the application of IQR method, so no pre-processing was done.
+5. Age: We found 23 outliers in age. As age is a continuous variable, we usedwinsorisationby applying IQR capping on age. After preprocessing there were no outliers.
+6. Existing Credits: We detected six observations as outliers according to the IQR method. However, existing credits represents a discretecount with a small set of possible values. These were not abnormal and were
+legitimate observations, so we decided not to perform any pre-processing.
+7. Dependents: According to the IQR method we had found 155 outliers for dependents. This can be seen as a weakness of IQR method. Dependents has only two valid values (1, 2). Since majority of clients have 1
+dependent , the upper bound calculated using the IQR method becomes equal to 1, hence all observation with value 2 become outliers which are not actual outliers but just the another valid value. So we decided not to
+perform any pre-processing on the data.
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+36/64
+  #3. Categorical Encoding & Scaling
+In [ ]:
+df_processed.head()
+
+
+checking_account_status
+duration_months
+credit_history
+purpose
+credit_amount
+savings_account
+employment_since
+installment_rate
+personal_status_sex
+other_debtors
+0
+< 0 DM
+6
+Critical
+account /
+other credits
+Radio/TV
+7.064759
+Unknown / no
+savings
+>=7 years
+4
+Male single
+None
+1
+0 <= balance < 200 DM
+42
+Existing
+credits paid
+back duly till
+now
+Radio/TV
+8.691483
+<100 DM
+1-4 years
+2
+Female
+divorced/separated/married
+None
+2
+No checking account
+12
+Critical
+account /
+other credits
+Education
+7.648263
+<100 DM
+4-7 years
+2
+Male single
+None
+3
+< 0 DM
+42
+Existing
+credits paid
+back duly till
+now
+Furniture/equipment
+8.972464
+<100 DM
+4-7 years
+2
+Male single
+Guarantor
+4
+< 0 DM
+24
+Delay in
+paying in the
+past
+New car
+8.491055
+<100 DM
+1-4 years
+3
+Male single
+None
+5 rows × 21 columns
+In [ ]:
+# Convert target to binary
+df_processed["credit_risk"] = df_processed["credit_risk"].map({
+    "Good Credit": 0,
+    "Bad Credit": 1
+})
+In [ ]:
+# Separating the data into features and target
+X = df_processed.drop("credit_risk", axis=1)
+y = df_processed["credit_risk"]
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+37/64
+In [ ]:
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.20,
+    random_state=42,
+    stratify=y
+)
+print("Training set:", X_train.shape)
+print("Testing set :", X_test.shape)
+Training set: (800, 20)
+Testing set : (200, 20)
+In [ ]:
+# Identify Categorical and Numerical Features
+categorical_features = X.select_dtypes(include="object").columns.tolist()
+numerical_features = X.select_dtypes(include=["int64", "float64"]).columns.tolist()
+print("Categorical Features:")
+print(categorical_features)
+print("\nNumerical Features:")
+print(numerical_features)
+Categorical Features:
+['checking_account_status', 'credit_history', 'purpose', 'savings_account', 'employment_since', 'personal_status_sex', 'other_debtors', 'property', 'other_installment_plans', 
+'housing', 'job', 'telephone', 'foreign_worker']
+Numerical Features:
+['duration_months', 'credit_amount', 'installment_rate', 'residence_since', 'age', 'existing_credits', 'dependents']
+In [ ]:
+#One-Hot Encode the Categorical Variables
+from sklearn.preprocessing import OneHotEncoder
+encoder = OneHotEncoder(
+    drop="first",
+    handle_unknown="ignore",
+    sparse_output=False
+)
+# Fit only on training data
+X_train_encoded = encoder.fit_transform(X_train[categorical_features])
+# Transform the test data
+X_test_encoded = encoder.transform(X_test[categorical_features])
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+38/64
+In [ ]:
+X_train_encoded
+array([[1., 0., 0., ..., 0., 0., 1.],
+       [0., 0., 1., ..., 0., 0., 1.],
+       [1., 0., 0., ..., 0., 0., 1.],
+       ...,
+       [0., 0., 1., ..., 0., 1., 1.],
+       [1., 0., 0., ..., 0., 1., 1.],
+       [0., 0., 1., ..., 0., 0., 1.]])
+In [ ]:
+#Convert the Encoded Arrays to DataFrames
+import pandas as pd
+encoded_columns = encoder.get_feature_names_out(categorical_features)
+X_train_encoded = pd.DataFrame(
+    X_train_encoded,
+    columns=encoded_columns,
+    index=X_train.index
+)
+X_test_encoded = pd.DataFrame(
+    X_test_encoded,
+    columns=encoded_columns,
+    index=X_test.index
+)
+In [ ]:
+X_test_encoded
+
+
+checking_account_status_<
+0 DM
+checking_account_status_>=
+200 DM
+checking_account_status_No
+checking account
+credit_history_Critical
+account / other
+credits
+credit_history_Delay
+in paying in the
+past
+credit_history_Existing
+credits paid back duly
+till now
+credit_history_No
+credits taken / all
+paid back
+purpose_Domestic
+appliances
+p
+30
+0.0
+0.0
+0.0
+0.0
+0.0
+1.0
+0.0
+0.0
+0
+128
+0.0
+0.0
+0.0
+1.0
+0.0
+0.0
+0.0
+0.0
+0
+289
+1.0
+0.0
+0.0
+0.0
+1.0
+0.0
+0.0
+0.0
+0
+216
+1.0
+0.0
+0.0
+0.0
+0.0
+0.0
+1.0
+0.0
+0
+966
+0.0
+0.0
+0.0
+1.0
+0.0
+0.0
+0.0
+0.0
+0
+...
+...
+...
+...
+...
+...
+...
+...
+...
+..
+522
+1.0
+0.0
+0.0
+0.0
+0.0
+0.0
+1.0
+0.0
+0
+977
+0.0
+0.0
+0.0
+0.0
+1.0
+0.0
+0.0
+0.0
+0
+52
+0.0
+0.0
+1.0
+0.0
+0.0
+1.0
+0.0
+0.0
+0
+542
+1.0
+0.0
+0.0
+0.0
+0.0
+1.0
+0.0
+0.0
+0
+423
+0.0
+0.0
+1.0
+0.0
+1.0
+0.0
+0.0
+0.0
+0
+200 rows × 41 columns
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+39/64
+In [ ]:
+#Combine the Numerical and Encoded Features
+X_train = pd.concat(
+    [
+        X_train[numerical_features],
+        X_train_encoded
+    ],
+    axis=1
+)
+X_test = pd.concat(
+    [
+        X_test[numerical_features],
+        X_test_encoded
+    ],
+    axis=1
+)
+In
+[120]:
+# Check new dataset
+print("Training Shape:", X_train.shape)
+print("Testing Shape :", X_test.shape)
+X_train.head()
+Training Shape: (800, 48)
+Testing Shape : (200, 48)
+Out[120]:
+
+
+duration_months
+credit_amount
+installment_rate
+residence_since
+age
+existing_credits
+dependents
+checking_account_status_<
+0 DM
+checking_account_status_>=
+200 DM
+checking_account_status_No
+checking account
+828
+36
+9.028339
+3
+4
+47.0
+1
+1
+1.0
+0.0
+0.0
+997
+12
+6.690842
+4
+4
+38.0
+1
+1
+0.0
+0.0
+1.0
+148
+36
+8.588956
+3
+2
+28.0
+2
+1
+1.0
+0.0
+0.0
+735
+36
+8.291797
+3
+2
+29.0
+1
+1
+0.0
+0.0
+0.0
+130
+42
+9.046409
+1
+2
+24.0
+1
+1
+0.0
+0.0
+0.0
+5 rows × 48 columns
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+40/64
+ 
+Scaling
+In
+[121]:
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+# Fit the scaler on the training data and transform it
+X_train[numerical_features] = scaler.fit_transform(
+    X_train[numerical_features]
+)
+# Use the same scaler to transform the test data
+X_test[numerical_features] = scaler.transform(
+    X_test[numerical_features]
+)
+In
+[122]:
+X_train[numerical_features].describe().T
+Out[122]:
+count
+mean
+std
+min
+25%
+50%
+75%
+max
+duration_months
+800.0
+2.220446e-17
+1.000626
+-1.541622
+-0.782495
+-0.213149
+0.356197
+2.064234
+credit_amount
+800.0
+9.880985e-17
+1.000626
+-2.789742
+-0.728632
+-0.030280
+0.656782
+2.474675
+installment_rate
+800.0
+-1.132427e-16
+1.000626
+-1.727486
+-0.837603
+0.052281
+0.942164
+0.942164
+residence_since
+800.0
+-7.993606e-17
+1.000626
+-1.647646
+-0.747293
+0.153060
+1.053413
+1.053413
+age
+800.0
+2.220446e-16
+1.000626
+-1.503881
+-0.763281
+-0.207831
+0.532769
+2.708281
+existing_credits
+800.0
+6.661338e-17
+1.000626
+-0.718745
+-0.718745
+-0.718745
+1.045047
+4.572632
+dependents
+800.0
+2.708944e-16
+1.000626
+-0.436436
+-0.436436
+-0.436436
+-0.436436
+2.291288
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+41/64
+In
+[124]:
+print("Mean after scaling:")
+print(X_train[numerical_features].mean().round(2))
+print("\nStandard deviation after scaling:")
+print(X_train[numerical_features].std().round(2))
+Mean after scaling:
+duration_months     0.0
+credit_amount       0.0
+installment_rate   -0.0
+residence_since    -0.0
+age                 0.0
+existing_credits    0.0
+dependents          0.0
+dtype: float64
+Standard deviation after scaling:
+duration_months     1.0
+credit_amount       1.0
+installment_rate    1.0
+residence_since     1.0
+age                 1.0
+existing_credits    1.0
+dependents          1.0
+dtype: float64
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+42/64
+In
+[126]:
+import matplotlib.pyplot as plt
+feature = "credit_amount"
+fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+# Before scaling
+axes[0].hist(df[feature], bins=20)
+axes[0].set_title(f"Before Scaling: {feature}")
+# After scaling
+axes[1].hist(X_train[feature], bins=20)
+axes[1].set_title(f"After Scaling: {feature}")
+plt.tight_layout()
+plt.show()
+  #4. Logistic Regression from Scratch
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+43/64
+In
+[189]:
+import numpy as np
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score
+)
+class LogisticRegressionFromScratch:
+    """
+    Logistic Regression implemented from scratch using Gradient Descent.
+    """
+    def __init__(
+        self,
+        learning_rate=0.01,
+        iterations=1000,
+        tolerance=1e-6,
+        patience=50
+    ):
+        self.lr = learning_rate
+        self.iterations = iterations
+        self.tolerance = tolerance
+        self.patience = patience
+        self.weights = None
+        self.bias = None
+        self.cost_history = []
+    # -------------------------------------------------
+    # Sigmoid Function
+    # -------------------------------------------------
+    def _sigmoid(self, z):
+        z = np.clip(z, -500, 500)
+        return 1 / (1 + np.exp(-z))
+    # -------------------------------------------------
+    # Binary Cross Entropy Loss
+    # -------------------------------------------------
+    def _compute_cost(self, y, y_pred):
+        m = len(y)
+        epsilon = 1e-15
+        y_pred = np.clip(y_pred, epsilon, 1-epsilon)
+        cost = -(1/m) * np.sum(
+            y*np.log(y_pred) +
+            (1-y)*np.log(1-y_pred)
+        )
+        return cost
+    # -------------------------------------------------
+    # Model Training
+    # -------------------------------------------------
+    def fit(self, X, y):
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+44/64
+        X = np.array(X)
+        y = np.array(y)
+        m, n = X.shape
+        self.weights = np.zeros(n)
+        self.bias = 0.0
+        best_cost = np.inf
+        patience_counter = 0
+        for epoch in range(self.iterations):
+            # Linear model
+            linear_model = np.dot(X, self.weights) + self.bias
+            # Sigmoid
+            y_pred = self._sigmoid(linear_model)
+            # Cost
+            cost = self._compute_cost(y, y_pred)
+            self.cost_history.append(cost)
+            # Gradients
+            dw = (1/m) * np.dot(X.T, (y_pred - y))
+            db = (1/m) * np.sum(y_pred - y)
+            # Parameter Update
+            self.weights -= self.lr * dw
+            self.bias -= self.lr * db
+            # -----------------------
+            # Early Stopping
+            # -----------------------
+            if best_cost - cost > self.tolerance:
+                best_cost = cost
+                patience_counter = 0
+            else:
+                patience_counter += 1
+            if patience_counter >= self.patience:
+                print(f"Early stopping at iteration {epoch}")
+                break
+        return self
+    # -------------------------------------------------
+    # Predict Probabilities
+    # -------------------------------------------------
+    def predict_proba(self, X):
+        X = np.array(X)
+        linear_model = np.dot(X, self.weights) + self.bias
+        return self._sigmoid(linear_model)
+    # -------------------------------------------------
+    # Predict Classes
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+45/64
+    # -------------------------------------------------
+    def predict(self, X, threshold=0.5):
+        probabilities = self.predict_proba(X)
+        return (probabilities >= threshold).astype(int)
+    # -------------------------------------------------
+    # Model Evaluation
+    # -------------------------------------------------
+# -------------------------------------------------
+# Model Evaluation (From Scratch)
+# -------------------------------------------------
+    def evaluate(self, X, y):
+      y = np.array(y)
+      y_pred = self.predict(X)
+      # Confusion Matrix Components
+      TP = np.sum((y == 1) & (y_pred == 1))
+      TN = np.sum((y == 0) & (y_pred == 0))
+      FP = np.sum((y == 0) & (y_pred == 1))
+      FN = np.sum((y == 1) & (y_pred == 0))
+      # Accuracy
+      accuracy = (TP + TN) / (TP + TN + FP + FN)
+      # Precision
+      precision = TP / (TP + FP) if (TP + FP) != 0 else 0
+      # Recall
+      recall = TP / (TP + FN) if (TP + FN) != 0 else 0
+      # F1 Score
+      if (precision + recall) != 0:
+          f1 = 2 * (precision * recall) / (precision + recall)
+      else:
+          f1 = 0
+      CM={
+              "TP": TP.item(),
+              "TN": TN.item(),
+              "FP": FP.item(),
+              "FN": FN.item()
+          }
+      return {
+          "Accuracy": accuracy,
+          "Precision": precision,
+          "Recall": recall,
+          "F1 Score": f1,
+      }, CM
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+46/64
+In
+[190]:
+scratch_lr = LogisticRegressionFromScratch(
+    learning_rate=0.01,
+    iterations=1000000,
+    tolerance=1e-6,
+    patience=10
+)
+scratch_lr.fit(X_train, y_train)
+Early stopping at iteration 37568
+Out[190]: <__main__.LogisticRegressionFromScratch at 0x7963acc25df0>
+In
+[191]:
+metrics, CM = scratch_lr.evaluate(X_test, y_test)
+for metric, value in metrics.items():
+    print(f"{metric}: {value:.4f}")
+print("=========Confusion Matrix===========", CM)
+Accuracy: 0.7650
+Precision: 0.6327
+Recall: 0.5167
+F1 Score: 0.5688
+=========Confusion Matrix=========== {'TP': 31, 'TN': 122, 'FP': 18, 'FN': 29}
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+47/64
+In
+[192]:
+import matplotlib.pyplot as plt
+plt.figure(figsize=(8,5))
+plt.plot(scratch_lr.cost_history)
+plt.xlabel("Iteration")
+plt.ylabel("Binary Cross-Entropy Loss")
+plt.title("Gradient Descent Convergence")
+plt.grid(True)
+plt.show()
+In
+[194]:
+from sklearn.linear_model import LogisticRegression
+sk_model = LogisticRegression(max_iter=5000)
+sk_model.fit(X_train, y_train)
+sk_predictions = sk_model.predict(X_test)
+print("Scratch Accuracy :", accuracy_score(y_test, scratch_lr.predict(X_test)))
+print("Scikit Accuracy  :", accuracy_score(y_test, sk_predictions))
+Scratch Accuracy : 0.765
+Scikit Accuracy  : 0.75
+  #5. Model Training & Hyperparameter Tuning
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+48/64
+In
+[195]:
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.naive_bayes import GaussianNB
+import numpy as np
+models = {
+    "Logistic Regression": LogisticRegression(
+        max_iter=5000,
+        random_state=42
+    ),
+    "Support Vector Machine": SVC(
+        probability=True,
+        random_state=42
+    ),
+    "Gaussian Naive Bayes": GaussianNB()
+}
+param_distributions = {
+    "Logistic Regression": {
+        "C": np.logspace(-3, 2, 50),
+        "solver": ["lbfgs", "liblinear"],
+        "penalty": ["l2"]
+    },
+    "Support Vector Machine": {
+        "C": np.logspace(-2, 2, 50),
+        "kernel": ["linear", "rbf", "poly"],
+        "gamma": ["scale", "auto"] + list(np.logspace(-4, 1, 20))
+    },
+    "Gaussian Naive Bayes": {
+        "var_smoothing": np.logspace(-12, -6, 100)
+    }
+}
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+49/64
+In
+[200]:
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    roc_auc_score
+)
+import pandas as pd
+best_models = {}
+results = []
+for model_name, model in models.items():
+    print(f"Tuning {model_name}...")
+    random_search = RandomizedSearchCV(
+        estimator=model,
+        param_distributions=param_distributions[model_name],
+        n_iter=20,
+        scoring="f1",
+        cv=5,
+        random_state=42,
+        n_jobs=-1
+    )
+    random_search.fit(X_train, y_train)
+    best_model = random_search.best_estimator_
+    best_models[model_name] = best_model
+    # Predictions
+    y_pred = best_model.predict(X_test)
+    # Probabilities / Scores for ROC-AUC
+    if hasattr(best_model, "predict_proba"):
+        y_prob = best_model.predict_proba(X_test)[:, 1]
+    else:
+        y_prob = best_model.decision_function(X_test)
+    results.append({
+        "Model": model_name,
+        "Best Parameters": random_search.best_params_,
+        "Best CV F1": round(random_search.best_score_, 4),
+        "Accuracy": round(accuracy_score(y_test, y_pred), 4),
+        "Precision": round(precision_score(y_test, y_pred), 4),
+        "Recall": round(recall_score(y_test, y_pred), 4),
+        "F1 Score": round(f1_score(y_test, y_pred), 4),
+        "ROC AUC": round(roc_auc_score(y_test, y_prob), 4)
+    })
+tuning_results = pd.DataFrame(results)
+tuning_results
+Tuning Logistic Regression...
+Tuning Support Vector Machine...
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+50/64
+Tuning Gaussian Naive Bayes...
+Out[200]:
+Model
+Best Parameters
+Best CV F1
+Accuracy
+Precision
+Recall
+F1 Score
+ROC AUC
+0
+Logistic Regression
+{'solver': 'lbfgs', 'penalty': 'l2', 'C': 7.54...
+0.5447
+0.750
+0.6000
+0.5000
+0.5455
+0.7881
+1
+Support Vector Machine
+{'kernel': 'linear', 'gamma': 0.07847599703514...
+0.5398
+0.765
+0.6512
+0.4667
+0.5437
+0.7786
+2
+Gaussian Naive Bayes
+{'var_smoothing': 2.848035868435805e-07}
+0.5444
+0.685
+0.4810
+0.6333
+0.5468
+0.7286
+In
+[204]:
+tuning_results = pd.DataFrame(results)
+tuning_results
+Out[204]:
+Model
+Best Parameters
+Best CV F1
+Accuracy
+Precision
+Recall
+F1 Score
+ROC AUC
+0
+Logistic Regression
+{'solver': 'lbfgs', 'penalty': 'l2', 'C': 7.54...
+0.5447
+0.750
+0.6000
+0.5000
+0.5455
+0.7881
+1
+Support Vector Machine
+{'kernel': 'linear', 'gamma': 0.07847599703514...
+0.5398
+0.765
+0.6512
+0.4667
+0.5437
+0.7786
+2
+Gaussian Naive Bayes
+{'var_smoothing': 2.848035868435805e-07}
+0.5444
+0.685
+0.4810
+0.6333
+0.5468
+0.7286
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+51/64
+ 
+6. Model Evaluation & Comparison
+In
+[206]:
+evaluation_results = []
+for model_name, model in best_models.items():
+    # Predictions
+    y_pred = model.predict(X_test)
+    # Probability estimates (or decision scores for ROC-AUC)
+    if hasattr(model, "predict_proba"):
+        y_prob = model.predict_proba(X_test)[:, 1]
+    else:
+        y_prob = model.decision_function(X_test)
+    evaluation_results.append({
+        "Model": model_name,
+        "Accuracy": accuracy_score(y_test, y_pred),
+        "Precision": precision_score(y_test, y_pred),
+        "Recall": recall_score(y_test, y_pred),
+        "F1 Score": f1_score(y_test, y_pred),
+        "ROC AUC": roc_auc_score(y_test, y_prob)
+    })
+evaluation_df = pd.DataFrame(evaluation_results)
+evaluation_df = evaluation_df.round(4)
+evaluation_df
+Out[206]:
+Model
+Accuracy
+Precision
+Recall
+F1 Score
+ROC AUC
+0
+Logistic Regression
+0.750
+0.6000
+0.5000
+0.5455
+0.7881
+1
+Support Vector Machine
+0.765
+0.6512
+0.4667
+0.5437
+0.7786
+2
+Gaussian Naive Bayes
+0.685
+0.4810
+0.6333
+0.5468
+0.7286
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+52/64
+In
+[207]:
+import matplotlib.pyplot as plt
+from sklearn.metrics import ConfusionMatrixDisplay
+for model_name, model in best_models.items():
+    fig, ax = plt.subplots(figsize=(5,4))
+    ConfusionMatrixDisplay.from_estimator(
+        model,
+        X_test,
+        y_test,
+        cmap="Blues",
+        ax=ax
+    )
+    plt.title(f"{model_name} Confusion Matrix")
+    plt.show()
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+53/64
+  #Visual: Mdel Result Comparison
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+54/64
+In
+[210]:
+import matplotlib.pyplot as plt
+metrics = ["Accuracy", "Precision", "Recall", "F1 Score", "ROC AUC"]
+comparison = evaluation_df.set_index("Model")
+comparison.plot(
+    kind="bar",
+    figsize=(10,6)
+)
+plt.ylabel("Score")
+plt.title("Performance Comparison of Machine Learning Models")
+plt.xticks(rotation=0)
+plt.legend(loc="lower right")
+plt.tight_layout()
+plt.show()
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+55/64
+ 
+Model Comparison
+The three machine learning models were evaluated on the test set using the following performance metrics:
+- Accuracy
+- Precision
+- Recall
+- F1-Score
+- ROC-AUC
+Each metric provides a different perspective on model performance. Since the German Credit dataset is moderately imbalanced, relying solely on accuracy can be misleading. Therefore, F1-Score and ROC-AUC were also
+considered because they account for the trade-off between true positives, true negatives, false positives, and false negatives. This is particularly important in credit risk prediction, where misclassifying a high-risk applicant as
+low-risk can have significant financial consequences.
+---
+1. Logistic Regression
+Logistic Regression achieved solid predictive performance while remaining the most interpretable model among the three classifiers.
+Advantages
+- Easy to understand and explain.
+- Model coefficients indicate how each feature affects the probability of a customer being classified as a bad credit risk.
+- Suitable for financial institutions where explainability is essential for regulatory compliance and decision-making.
+Limitations
+- Assumes a linear relationship between the features and the log-odds of the target.
+- May struggle to capture complex nonlinear relationships in the data.
+---
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+56/64
+2. Support Vector Machine (SVM)
+Support Vector Machine (SVM) achieved strong predictive performance by learning an optimal decision boundary and effectively modeling complex relationships within the dataset.
+Advantages
+- High predictive accuracy.
+- Effective in handling high-dimensional data.
+- Can model nonlinear relationships using kernel functions.
+Limitations
+- Computationally more expensive than Logistic Regression.
+- More difficult to interpret.
+- Requires careful tuning of hyperparameters such as the kernel and regularization parameter.
+---
+3. Gaussian Naive Bayes
+Gaussian Naive Bayes required the least training time while still producing reasonable classification results.
+Advantages
+- Extremely fast to train and predict.
+- Performs well even with relatively small datasets.
+- Simple implementation.
+Limitations
+- Assumes that all input features are conditionally independent.
+- This assumption rarely holds in real-world credit assessment, where financial variables are often correlated.
+- Generally less reliable than the other models for predicting future credit risk.
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+57/64
+---
+Discussion
+Because the German Credit dataset contains a higher proportion of good credit applicants, accuracy alone is not an appropriate evaluation metric.
+For example, if approximately 70% of customers have good credit, a model that simply predicts "Good Credit" for every applicant would achieve around 70% accuracy, despite having no ability to identify risky applicants.
+For this reason, greater emphasis should be placed on metrics such as:
+- Precision, which measures how many predicted bad-credit applicants are actually bad.
+- Recall, which measures how many actual bad-credit applicants are correctly identified.
+- F1-Score, which balances precision and recall.
+- ROC-AUC, which evaluates the model's ability to distinguish between good and bad credit applicants across different classification thresholds.
+These metrics provide a more comprehensive assessment of classifier performance in imbalanced datasets and are especially valuable in financial risk prediction, where the cost of misclassification is asymmetric.
+ 
+7. Feature Importance & Interpretation
+In
+[212]:
+#Get the Logistic Regression Model
+lr_model = best_models["Logistic Regression"]
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+58/64
+In
+[213]:
+import pandas as pd
+feature_importance = pd.DataFrame({
+    "Feature": X_train.columns,
+    "Coefficient": lr_model.coef_[0]
+})
+feature_importance["Absolute Coefficient"] = (
+    feature_importance["Coefficient"].abs()
+)
+feature_importance = feature_importance.sort_values(
+    by="Absolute Coefficient",
+    ascending=False
+)
+feature_importance.head(15)
+Out[213]:
+Feature
+Coefficient
+Absolute Coefficient
+42
+housing_Rent
+1.361666
+1.361666
+47
+foreign_worker_Yes
+1.262759
+1.262759
+9
+checking_account_status_No checking account
+-1.209532
+1.209532
+10
+credit_history_Critical account / other credits
+-1.207417
+1.207417
+15
+purpose_Education
+1.145812
+1.145812
+38
+property_Unknown/no property
+1.082309
+1.082309
+25
+savings_account_>=1000 DM
+-1.053598
+1.053598
+34
+other_debtors_Guarantor
+-0.970664
+0.970664
+39
+other_installment_plans_None
+-0.840654
+0.840654
+41
+housing_Own
+0.817749
+0.817749
+26
+savings_account_Unknown / no savings
+-0.732815
+0.732815
+20
+purpose_Repairs
+0.695348
+0.695348
+17
+purpose_New car
+0.667107
+0.667107
+18
+purpose_Others
+-0.625492
+0.625492
+22
+purpose_Used car
+-0.615987
+0.615987
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+59/64
+In
+[214]:
+import matplotlib.pyplot as plt
+top_features = feature_importance.head(15)
+plt.figure(figsize=(10,6))
+plt.barh(
+    top_features["Feature"],
+    top_features["Coefficient"]
+)
+plt.title("Top 15 Logistic Regression Coefficients")
+plt.xlabel("Coefficient")
+plt.gca().invert_yaxis()
+plt.tight_layout()
+plt.show()
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+60/64
+In
+[215]:
+feature_importance["Impact"] = feature_importance["Coefficient"].apply(
+    lambda x: "Increases Bad Credit Risk" if x > 0 else "Decreases Bad Credit Risk"
+)
+feature_importance.head(15)
+Out[215]:
+Feature
+Coefficient
+Absolute Coefficient
+Impact
+42
+housing_Rent
+1.361666
+1.361666
+Increases Bad Credit Risk
+47
+foreign_worker_Yes
+1.262759
+1.262759
+Increases Bad Credit Risk
+9
+checking_account_status_No checking account
+-1.209532
+1.209532
+Decreases Bad Credit Risk
+10
+credit_history_Critical account / other credits
+-1.207417
+1.207417
+Decreases Bad Credit Risk
+15
+purpose_Education
+1.145812
+1.145812
+Increases Bad Credit Risk
+38
+property_Unknown/no property
+1.082309
+1.082309
+Increases Bad Credit Risk
+25
+savings_account_>=1000 DM
+-1.053598
+1.053598
+Decreases Bad Credit Risk
+34
+other_debtors_Guarantor
+-0.970664
+0.970664
+Decreases Bad Credit Risk
+39
+other_installment_plans_None
+-0.840654
+0.840654
+Decreases Bad Credit Risk
+41
+housing_Own
+0.817749
+0.817749
+Increases Bad Credit Risk
+26
+savings_account_Unknown / no savings
+-0.732815
+0.732815
+Decreases Bad Credit Risk
+20
+purpose_Repairs
+0.695348
+0.695348
+Increases Bad Credit Risk
+17
+purpose_New car
+0.667107
+0.667107
+Increases Bad Credit Risk
+18
+purpose_Others
+-0.625492
+0.625492
+Decreases Bad Credit Risk
+22
+purpose_Used car
+-0.615987
+0.615987
+Decreases Bad Credit Risk
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+61/64
+In
+[216]:
+print("Top Features Increasing Bad Credit Risk")
+display(
+    feature_importance.sort_values("Coefficient", ascending=False).head(10)
+)
+print("Top Features Decreasing Bad Credit Risk")
+display(
+    feature_importance.sort_values("Coefficient").head(10)
+)
+Top Features Increasing Bad Credit Risk
+Feature
+Coefficient
+Absolute Coefficient
+Impact
+42
+housing_Rent
+1.361666
+1.361666
+Increases Bad Credit Risk
+47
+foreign_worker_Yes
+1.262759
+1.262759
+Increases Bad Credit Risk
+15
+purpose_Education
+1.145812
+1.145812
+Increases Bad Credit Risk
+38
+property_Unknown/no property
+1.082309
+1.082309
+Increases Bad Credit Risk
+41
+housing_Own
+0.817749
+0.817749
+Increases Bad Credit Risk
+20
+purpose_Repairs
+0.695348
+0.695348
+Increases Bad Credit Risk
+17
+purpose_New car
+0.667107
+0.667107
+Increases Bad Credit Risk
+30
+employment_since_Unemployed
+0.565716
+0.565716
+Increases Bad Credit Risk
+0
+duration_months
+0.439938
+0.439938
+Increases Bad Credit Risk
+31
+personal_status_sex_Male divorced/separated
+0.397422
+0.397422
+Increases Bad Credit Risk
+Top Features Decreasing Bad Credit Risk
+Feature
+Coefficient
+Absolute Coefficient
+Impact
+9
+checking_account_status_No checking account
+-1.209532
+1.209532
+Decreases Bad Credit Risk
+10
+credit_history_Critical account / other credits
+-1.207417
+1.207417
+Decreases Bad Credit Risk
+25
+savings_account_>=1000 DM
+-1.053598
+1.053598
+Decreases Bad Credit Risk
+34
+other_debtors_Guarantor
+-0.970664
+0.970664
+Decreases Bad Credit Risk
+39
+other_installment_plans_None
+-0.840654
+0.840654
+Decreases Bad Credit Risk
+26
+savings_account_Unknown / no savings
+-0.732815
+0.732815
+Decreases Bad Credit Risk
+18
+purpose_Others
+-0.625492
+0.625492
+Decreases Bad Credit Risk
+22
+purpose_Used car
+-0.615987
+0.615987
+Decreases Bad Credit Risk
+21
+purpose_Retraining
+-0.612003
+0.612003
+Decreases Bad Credit Risk
+33
+personal_status_sex_Male single
+-0.601001
+0.601001
+Decreases Bad Credit Risk
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+62/64
+ 
+Feature Importance and Interpretation
+The most important features for predicting bad credit risk were identified using the coefficients of the tuned Logistic Regression model. Unlike many machine learning models that operate as "black boxes," Logistic
+Regression provides a transparent and interpretable way to understand how each feature influences the probability of an applicant being classified as a bad credit risk.
+Interpreting the Coefficients
+The model coefficients can be interpreted as follows:
+- Larger absolute coefficient values indicate that the feature has a greater influence on the prediction.
+- A positive coefficient means the feature increases the probability that an applicant will be classified as a bad credit risk.
+- A negative coefficient means the feature decreases the probability that an applicant will be classified as a bad credit risk.
+---
+Most Influential Features
+Ranking the coefficients by their absolute values highlights the variables that contribute most to predicting credit risk.
+Some of the most influential features include:
+- Checking account status
+- Credit history
+- Loan amount requested
+- Loan duration (repayment period)
+Applicants with a favorable credit history or a healthy checking account balance generally received negative coefficients, indicating a lower likelihood of being classified as a bad credit risk. Conversely, features
+associated with financial instability tended to have positive coefficients, increasing the predicted risk.
+---
+Business Implications
+Understanding feature importance provides several practical benefits for lending institutions:
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+63/64
+Exported with runcell — convert notebooks to HTML or PDF anytime at runcell.dev.
+- Improves transparency and explainability in loan approval decisions.
+- Helps banks adjust loan terms based on an applicant's estimated risk profile.
+- Supports better assessment of appropriate lending amounts.
+- Identifies high-risk applicants who may require additional creditworthiness reviews.
+- Assists financial institutions in meeting regulatory and compliance requirements by providing interpretable decision-making processes.
+The interpretability of Logistic Regression makes it particularly valuable in credit risk assessment, where both predictive performance and model transparency are essential.
+In [ ]:
+7/7/26, 4:30 PM
+Jupyter Notebook — generated with runcell
+about:blank
+64/64
