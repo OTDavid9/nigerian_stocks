@@ -164,7 +164,7 @@ async def handle_chat_stream(session_id: str, user_input: str):
             tool_choice="auto",
             stream=False,  # Tool detection requires non-streaming
             temperature=0.9,
-        )
+        ) # type: ignore
 
         message = response.choices[0].message
 
@@ -204,7 +204,7 @@ async def handle_chat_stream(session_id: str, user_input: str):
             messages=truncated_conversation,
             stream=True,
             temperature=0.9,
-        )
+        ) # type: ignore
 
         full_response = ""
 

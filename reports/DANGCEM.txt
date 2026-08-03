@@ -1,0 +1,84 @@
+Investment Analysis for DANGCEM (NGX)
+============================================================
+
+Technical Analysis Report for DANGCEM (NGX, NGN)
+------------------------------------------------------------
+Period: 2016-08-03 to 2026-07-31 (2471 trading days)
+Latest Close: 1034.00
+Min: 116.80  Max: 1180.00  Avg: 325.00
+
+Total Return: 465.03%
+Annualised Return: 19.32%
+Annualised Volatility: 33.32%
+
+Moving Averages:
+  SMA(50): 1071.30 (Price vs SMA: -3.48%)
+  SMA(200): 814.08 (Price vs SMA: 27.01%)
+  MA Cross Signal: golden_cross
+
+Recent Performance:
+  1m_change_pct: 16.05%
+  3m_change_pct: 6.6%
+  6m_change_pct: 62.83%
+  1y_change_pct: 95.72%
+
+RSI(14): 49.33
+
+MACD:
+  MACD Line: -1.3407
+  Signal Line: -3.5862
+  Histogram: 2.2455 (bullish (above signal))
+
+Max Drawdown: 57.99%
+
+Multi‑Model Predictive Analysis
+============================================================
+Validation: Walk‑forward (2460 samples, 5 folds)
+Features (tabular): lagged close prices at (1, 2, 3, 5, 10)
+
+--- Regression Models (Price Prediction) ---
+Model                     MAE     RMSE     MAPE       R²
+--------------------------------------------------------
+Lasso                  5.6221  14.3169     1.54%   0.9957
+Linear Reg             5.6224  14.3172     1.54%   0.9957
+Ridge                  5.6224  14.3173     1.54%   0.9957
+ElasticNet             5.6224  14.3172     1.54%   0.9957
+CatBoost              55.3790 123.9967     9.98%   0.6781
+GradBoost             55.9427 124.1474    10.08%   0.6773
+KNN                   56.1138 123.5573    10.31%   0.6804
+RandomForest          56.3667 124.8609    10.22%   0.6736
+XGBoost               57.2942 124.4126    10.34%   0.6760
+DecisionTree          57.6790 124.8792    10.63%   0.6735
+LightGBM              58.6304 129.1856    10.53%   0.6506
+SVR                   69.4423 167.2293    11.60%   0.4145
+ARIMA                 97.9831 169.5642    23.36%   0.3969
+Prophet              156.5015 198.3338    48.94%   0.1748
+
+Baseline (persistence) MAE: 4.5533
+Best price model: Lasso
+
+--- Classification Models (Direction Prediction) ---
+Model                     Acc     Prec      Rec       F1
+--------------------------------------------------------
+Logistic               0.8537   0.0000   0.0000   0.0000
+CatBoost               0.8429   0.1562   0.0167   0.0301
+DecisionTree           0.8229   0.2886   0.1433   0.1915
+RandomForest           0.8137   0.1797   0.0767   0.1075
+LightGBM               0.8127   0.2042   0.0967   0.1312
+KNN                    0.8015   0.1871   0.1067   0.1359
+SVC                    0.7917   0.1104   0.0600   0.0778
+XGBoost                0.7883   0.2185   0.1733   0.1933
+GradBoost              0.7878   0.2332   0.1967   0.2134
+GaussianNB             0.7756   0.1396   0.1033   0.1188
+
+Baseline (always 'up') Accuracy: 0.1776
+Best direction model: Logistic
+
+Next 5-Day Forecast (best price model: Lasso)
+  Day 1: ₦1033.49  (Prob. Up: 0.04, Down)
+  Day 2: ₦1033.46  (Prob. Up: 0.04, Down)
+  Day 3: ₦1033.47  (Prob. Up: 0.04, Down)
+  Day 4: ₦1033.40  (Prob. Up: 0.04, Down)
+  Day 5: ₦1033.32  (Prob. Up: 0.04, Down)
+Overall trend: downward (avg forecast ₦1033.43 vs. last close ₦1034.00)
+Model Reliability: High

@@ -1,0 +1,84 @@
+Investment Analysis for CONOIL (NGX)
+============================================================
+
+Technical Analysis Report for CONOIL (NGX, NGN)
+------------------------------------------------------------
+Period: 2016-08-03 to 2026-07-31 (2467 trading days)
+Latest Close: 210.00
+Min: 13.15  Max: 387.20  Avg: 76.36
+
+Total Return: 732.67%
+Annualised Return: 24.17%
+Annualised Volatility: 39.65%
+
+Moving Averages:
+  SMA(50): 204.94 (Price vs SMA: 2.47%)
+  SMA(200): 191.75 (Price vs SMA: 9.52%)
+  MA Cross Signal: golden_cross
+
+Recent Performance:
+  1m_change_pct: 0.0%
+  3m_change_pct: 8.25%
+  6m_change_pct: 24.26%
+  1y_change_pct: -10.45%
+
+RSI(14): 83.16
+
+MACD:
+  MACD Line: 1.0851
+  Signal Line: 1.497
+  Histogram: -0.4118 (bearish (below signal))
+
+Max Drawdown: 70.49%
+
+Multi‑Model Predictive Analysis
+============================================================
+Validation: Walk‑forward (2456 samples, 5 folds)
+Features (tabular): lagged close prices at (1, 2, 3, 5, 10)
+
+--- Regression Models (Price Prediction) ---
+Model                     MAE     RMSE     MAPE       R²
+--------------------------------------------------------
+Lasso                  1.8974   4.5370     2.66%   0.9978
+ElasticNet             1.9010   4.5432     2.66%   0.9978
+Linear Reg             1.9062   4.5483     2.67%   0.9978
+Ridge                  1.9062   4.5483     2.67%   0.9978
+XGBoost               22.2466  43.6257    18.04%   0.7958
+KNN                   23.2335  44.3636    18.49%   0.7888
+GradBoost             23.6935  44.3632    19.38%   0.7888
+DecisionTree          23.7938  44.5556    19.72%   0.7870
+RandomForest          23.7977  44.4502    18.95%   0.7880
+CatBoost              24.6963  45.4623    20.54%   0.7782
+LightGBM              26.5581  48.5536    20.13%   0.7470
+SVR                   31.0917  66.7059    21.96%   0.5225
+ARIMA                 33.2744  52.5085    35.63%   0.7031
+Prophet               40.5705  62.8727    57.95%   0.5743
+
+Baseline (persistence) MAE: 0.9471
+Best price model: Lasso
+
+--- Classification Models (Direction Prediction) ---
+Model                     Acc     Prec      Rec       F1
+--------------------------------------------------------
+Logistic               0.9403   0.1538   0.0177   0.0317
+CatBoost               0.8900   0.0942   0.1150   0.1036
+LightGBM               0.8416   0.0549   0.1150   0.0743
+RandomForest           0.8352   0.0692   0.1593   0.0965
+GradBoost              0.8225   0.0629   0.1593   0.0902
+SVC                    0.7956   0.0420   0.1239   0.0628
+DecisionTree           0.7809   0.0509   0.1681   0.0782
+XGBoost                0.7804   0.0435   0.1416   0.0665
+KNN                    0.7711   0.0292   0.0973   0.0449
+GaussianNB             0.4523   0.0532   0.5310   0.0968
+
+Baseline (always 'up') Accuracy: 0.0594
+Best direction model: Logistic
+
+Next 5-Day Forecast (best price model: Lasso)
+  Day 1: ₦209.97  (Prob. Up: 0.03, Down)
+  Day 2: ₦209.92  (Prob. Up: 0.03, Down)
+  Day 3: ₦209.87  (Prob. Up: 0.03, Down)
+  Day 4: ₦209.80  (Prob. Up: 0.03, Down)
+  Day 5: ₦209.74  (Prob. Up: 0.03, Down)
+Overall trend: downward (avg forecast ₦209.86 vs. last close ₦210.00)
+Model Reliability: High

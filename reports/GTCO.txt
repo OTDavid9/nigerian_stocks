@@ -1,0 +1,84 @@
+Investment Analysis for GTCO (NGX)
+============================================================
+
+Technical Analysis Report for GTCO (NGX, NGN)
+------------------------------------------------------------
+Period: 2016-08-03 to 2026-07-31 (2471 trading days)
+Latest Close: 130.00
+Min: 16.75  Max: 153.00  Avg: 41.99
+
+Total Return: 440.32%
+Annualised Return: 18.77%
+Annualised Volatility: 35.46%
+
+Moving Averages:
+  SMA(50): 130.67 (Price vs SMA: -0.51%)
+  SMA(200): 112.55 (Price vs SMA: 15.5%)
+  MA Cross Signal: golden_cross
+
+Recent Performance:
+  1m_change_pct: 6.56%
+  3m_change_pct: -3.7%
+  6m_change_pct: 31.31%
+  1y_change_pct: 29.35%
+
+RSI(14): 52.72
+
+MACD:
+  MACD Line: 0.3536
+  Signal Line: -0.0573
+  Histogram: 0.4109 (bullish (above signal))
+
+Max Drawdown: 69.38%
+
+Multi‑Model Predictive Analysis
+============================================================
+Validation: Walk‑forward (2460 samples, 5 folds)
+Features (tabular): lagged close prices at (1, 2, 3, 5, 10)
+
+--- Regression Models (Price Prediction) ---
+Model                     MAE     RMSE     MAPE       R²
+--------------------------------------------------------
+Lasso                  0.9903   1.7574     2.25%   0.9961
+Ridge                  0.9911   1.7597     2.26%   0.9961
+Linear Reg             0.9911   1.7598     2.26%   0.9961
+ElasticNet             0.9912   1.7574     2.26%   0.9961
+GradBoost              8.3927  20.6642     9.79%   0.4595
+XGBoost                8.4771  20.7127    10.01%   0.4570
+RandomForest           8.4926  20.8400     9.90%   0.4503
+CatBoost               8.5154  20.8260     9.99%   0.4510
+LightGBM               8.5407  20.9418     9.94%   0.4449
+DecisionTree           8.6226  20.8772    10.29%   0.4483
+KNN                    8.6416  20.8804    10.37%   0.4482
+SVR                   12.1175  28.9614    13.56%  -0.0617
+ARIMA                 14.3578  23.2105    27.81%   0.3165
+Prophet               20.0799  24.5795    51.72%   0.2334
+
+Baseline (persistence) MAE: 0.9241
+Best price model: Lasso
+
+--- Classification Models (Direction Prediction) ---
+Model                     Acc     Prec      Rec       F1
+--------------------------------------------------------
+Logistic               0.5351   0.3969   0.1133   0.1763
+LightGBM               0.5156   0.4288   0.3111   0.3606
+XGBoost                0.5112   0.4282   0.3378   0.3776
+SVC                    0.5102   0.4355   0.3900   0.4115
+CatBoost               0.5088   0.4076   0.2622   0.3191
+GradBoost              0.5073   0.4207   0.3244   0.3664
+KNN                    0.5073   0.4318   0.3867   0.4080
+RandomForest           0.5039   0.4020   0.2667   0.3206
+DecisionTree           0.5015   0.4150   0.3311   0.3684
+GaussianNB             0.4863   0.4155   0.4178   0.4166
+
+Baseline (always 'up') Accuracy: 0.4435
+Best direction model: Logistic
+
+Next 5-Day Forecast (best price model: Lasso)
+  Day 1: ₦130.38  (Prob. Up: 0.47, Down)
+  Day 2: ₦130.73  (Prob. Up: 0.47, Down)
+  Day 3: ₦130.98  (Prob. Up: 0.47, Down)
+  Day 4: ₦131.20  (Prob. Up: 0.47, Down)
+  Day 5: ₦131.47  (Prob. Up: 0.47, Down)
+Overall trend: upward (avg forecast ₦130.95 vs. last close ₦130.00)
+Model Reliability: Moderate

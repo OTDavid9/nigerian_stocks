@@ -19,7 +19,7 @@ async def chat(request: ChatRequest):
     )
     return ChatResponse(
         response=response,
-        session_id=request.session_id,
+        session_id=request.session_id, # type: ignore
     )
 
 # WebSocket endpoint – now at "/api/v1/chat"

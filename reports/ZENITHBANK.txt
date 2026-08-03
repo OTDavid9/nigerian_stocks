@@ -1,0 +1,84 @@
+Investment Analysis for ZENITHBANK (NGX)
+============================================================
+
+Technical Analysis Report for ZENITHBANK (NGX, NGN)
+------------------------------------------------------------
+Period: 2016-08-03 to 2026-07-31 (2471 trading days)
+Latest Close: 123.55
+Min: 10.70  Max: 135.90  Avg: 32.44
+
+Total Return: 651.06%
+Annualised Return: 22.83%
+Annualised Volatility: 36.87%
+
+Moving Averages:
+  SMA(50): 119.09 (Price vs SMA: 3.75%)
+  SMA(200): 92.81 (Price vs SMA: 33.12%)
+  MA Cross Signal: golden_cross
+
+Recent Performance:
+  1m_change_pct: 17.61%
+  3m_change_pct: -5.33%
+  6m_change_pct: 72.92%
+  1y_change_pct: 61.5%
+
+RSI(14): 58.81
+
+MACD:
+  MACD Line: 2.6376
+  Signal Line: 1.3754
+  Histogram: 1.2623 (bullish (above signal))
+
+Max Drawdown: 68.07%
+
+Multi‑Model Predictive Analysis
+============================================================
+Validation: Walk‑forward (2460 samples, 5 folds)
+Features (tabular): lagged close prices at (1, 2, 3, 5, 10)
+
+--- Regression Models (Price Prediction) ---
+Model                     MAE     RMSE     MAPE       R²
+--------------------------------------------------------
+ElasticNet             0.8384   1.6028     2.27%   0.9954
+Ridge                  0.8384   1.6029     2.27%   0.9954
+Linear Reg             0.8385   1.6029     2.27%   0.9954
+Lasso                  0.8388   1.6027     2.27%   0.9954
+LightGBM               7.2258  18.3495    10.74%   0.3992
+GradBoost              7.3210  18.5852    10.85%   0.3837
+KNN                    7.4053  18.4265    11.36%   0.3941
+XGBoost                7.4987  18.6416    11.29%   0.3799
+CatBoost               7.5548  18.9373    11.25%   0.3601
+RandomForest           7.7589  19.2304    11.58%   0.3401
+DecisionTree           7.9034  19.3246    12.03%   0.3336
+ARIMA                  9.9845  18.9207    22.47%   0.3598
+SVR                   10.6639  24.1160    16.80%  -0.0378
+Prophet               15.5116  21.0640    49.68%   0.2066
+
+Baseline (persistence) MAE: 0.7720
+Best price model: ElasticNet
+
+--- Classification Models (Direction Prediction) ---
+Model                     Acc     Prec      Rec       F1
+--------------------------------------------------------
+Logistic               0.5410   0.4578   0.0407   0.0747
+RandomForest           0.5215   0.4402   0.1852   0.2607
+XGBoost                0.5190   0.4590   0.3116   0.3712
+CatBoost               0.5161   0.4208   0.1649   0.2369
+LightGBM               0.5146   0.4436   0.2570   0.3254
+KNN                    0.5078   0.4631   0.5032   0.4823
+SVC                    0.5078   0.4490   0.3533   0.3954
+GradBoost              0.5073   0.4597   0.4636   0.4616
+DecisionTree           0.5049   0.4231   0.2388   0.3053
+GaussianNB             0.5005   0.4583   0.5300   0.4916
+
+Baseline (always 'up') Accuracy: 0.4614
+Best direction model: Logistic
+
+Next 5-Day Forecast (best price model: ElasticNet)
+  Day 1: ₦124.58  (Prob. Up: 0.46, Down)
+  Day 2: ₦125.06  (Prob. Up: 0.46, Down)
+  Day 3: ₦125.55  (Prob. Up: 0.46, Down)
+  Day 4: ₦125.90  (Prob. Up: 0.46, Down)
+  Day 5: ₦126.33  (Prob. Up: 0.46, Down)
+Overall trend: upward (avg forecast ₦125.48 vs. last close ₦123.55)
+Model Reliability: Moderate

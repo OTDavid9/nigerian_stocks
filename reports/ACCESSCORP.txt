@@ -1,0 +1,84 @@
+Investment Analysis for ACCESSCORP (NGX)
+============================================================
+
+Technical Analysis Report for ACCESSCORP (NGX, NGN)
+------------------------------------------------------------
+Period: 2016-08-03 to 2026-07-31 (2471 trading days)
+Latest Close: 26.30
+Min: 5.15  Max: 32.85  Avg: 12.71
+
+Total Return: 369.64%
+Annualised Return: 17.09%
+Annualised Volatility: 41.13%
+
+Moving Averages:
+  SMA(50): 24.58 (Price vs SMA: 7.0%)
+  SMA(200): 24.22 (Price vs SMA: 8.59%)
+  MA Cross Signal: golden_cross
+
+Recent Performance:
+  1m_change_pct: 19.55%
+  3m_change_pct: -2.59%
+  6m_change_pct: 16.37%
+  1y_change_pct: -5.73%
+
+RSI(14): 55.07
+
+MACD:
+  MACD Line: 0.7852
+  Signal Line: 0.7593
+  Histogram: 0.026 (bullish (above signal))
+
+Max Drawdown: 60.59%
+
+Multi‑Model Predictive Analysis
+============================================================
+Validation: Walk‑forward (2460 samples, 5 folds)
+Features (tabular): lagged close prices at (1, 2, 3, 5, 10)
+
+--- Regression Models (Price Prediction) ---
+Model                     MAE     RMSE     MAPE       R²
+--------------------------------------------------------
+Ridge                  0.3672   0.6460     2.64%   0.9918
+Linear Reg             0.3678   0.6461     2.64%   0.9918
+Lasso                  0.3680   0.6464     2.64%   0.9918
+ElasticNet             0.3685   0.6474     2.64%   0.9917
+XGBoost                1.5597   3.2063     8.73%   0.7974
+GradBoost              1.5754   3.2121     8.86%   0.7967
+RandomForest           1.5859   3.2443     8.97%   0.7926
+CatBoost               1.5883   3.2348     9.12%   0.7938
+KNN                    1.6323   3.2372     9.13%   0.7935
+LightGBM               1.6396   3.3084     9.15%   0.7844
+DecisionTree           1.6780   3.2622     9.49%   0.7903
+SVR                    2.0834   4.5239    11.27%   0.5968
+ARIMA                  3.5807   5.3113    28.84%   0.4429
+Prophet                6.8723   8.4380    63.79%  -0.4060
+
+Baseline (persistence) MAE: 0.3307
+Best price model: Ridge
+
+--- Classification Models (Direction Prediction) ---
+Model                     Acc     Prec      Rec       F1
+--------------------------------------------------------
+CatBoost               0.5800   0.4539   0.1471   0.2222
+Logistic               0.5785   0.4205   0.0885   0.1462
+RandomForest           0.5707   0.4267   0.1531   0.2254
+DecisionTree           0.5683   0.3901   0.1041   0.1643
+SVC                    0.5546   0.4449   0.3720   0.4052
+LightGBM               0.5517   0.4230   0.2727   0.3316
+GradBoost              0.5473   0.4442   0.4378   0.4410
+XGBoost                0.5429   0.4151   0.2955   0.3452
+KNN                    0.5195   0.4088   0.3995   0.4041
+GaussianNB             0.5117   0.4308   0.6148   0.5067
+
+Baseline (always 'up') Accuracy: 0.4191
+Best direction model: CatBoost
+
+Next 5-Day Forecast (best price model: Ridge)
+  Day 1: ₦26.37  (Prob. Up: 0.39, Down)
+  Day 2: ₦26.30  (Prob. Up: 0.39, Down)
+  Day 3: ₦26.26  (Prob. Up: 0.39, Down)
+  Day 4: ₦26.28  (Prob. Up: 0.39, Down)
+  Day 5: ₦26.29  (Prob. Up: 0.39, Down)
+Overall trend: upward (avg forecast ₦26.30 vs. last close ₦26.30)
+Model Reliability: Moderate

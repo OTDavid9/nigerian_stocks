@@ -1,0 +1,84 @@
+Investment Analysis for CUSTODIAN (NGX)
+============================================================
+
+Technical Analysis Report for CUSTODIAN (NGX, NGN)
+------------------------------------------------------------
+Period: 2016-08-03 to 2026-07-31 (2470 trading days)
+Latest Close: 80.00
+Min: 3.00  Max: 89.95  Avg: 12.27
+
+Total Return: 1905.01%
+Annualised Return: 35.78%
+Annualised Volatility: 43.93%
+
+Moving Averages:
+  SMA(50): 76.40 (Price vs SMA: 4.71%)
+  SMA(200): 61.42 (Price vs SMA: 30.25%)
+  MA Cross Signal: golden_cross
+
+Recent Performance:
+  1m_change_pct: 21.49%
+  3m_change_pct: -8.2%
+  6m_change_pct: 81.82%
+  1y_change_pct: 122.22%
+
+RSI(14): 74.33
+
+MACD:
+  MACD Line: 1.5667
+  Signal Line: 0.3794
+  Histogram: 1.1873 (bullish (above signal))
+
+Max Drawdown: 36.69%
+
+Multi‑Model Predictive Analysis
+============================================================
+Validation: Walk‑forward (2459 samples, 5 folds)
+Features (tabular): lagged close prices at (1, 2, 3, 5, 10)
+
+--- Regression Models (Price Prediction) ---
+Model                     MAE     RMSE     MAPE       R²
+--------------------------------------------------------
+Linear Reg             0.4180   1.1504     2.47%   0.9958
+Ridge                  0.4197   1.1522     2.49%   0.9958
+ElasticNet             0.4328   1.1724     2.59%   0.9957
+Lasso                  0.4359   1.1610     2.72%   0.9958
+CatBoost               6.5742  16.9359    18.84%   0.0991
+GradBoost              6.5849  16.9958    18.66%   0.0927
+DecisionTree           6.5985  16.9694    19.29%   0.0955
+RandomForest           6.6095  16.9923    19.15%   0.0931
+XGBoost                6.6224  17.0171    19.03%   0.0904
+KNN                    6.6238  16.9864    19.39%   0.0937
+LightGBM               6.7178  17.1005    20.07%   0.0815
+Prophet                6.7218  15.6945    25.79%   0.2235
+ARIMA                  6.9953  17.1114    23.63%   0.0770
+SVR                    7.8130  18.3818    27.57%  -0.0613
+
+Baseline (persistence) MAE: 0.3291
+Best price model: Linear Reg
+
+--- Classification Models (Direction Prediction) ---
+Model                     Acc     Prec      Rec       F1
+--------------------------------------------------------
+Logistic               0.8196   0.0000   0.0000   0.0000
+LightGBM               0.8196   0.0000   0.0000   0.0000
+CatBoost               0.8196   0.0000   0.0000   0.0000
+XGBoost                0.8083   0.1714   0.0163   0.0297
+KNN                    0.6973   0.1728   0.1789   0.1758
+RandomForest           0.6914   0.1741   0.1897   0.1816
+SVC                    0.6914   0.1757   0.1924   0.1837
+GaussianNB             0.6112   0.2351   0.5122   0.3223
+GradBoost              0.6059   0.1459   0.2439   0.1826
+DecisionTree           0.5971   0.1451   0.2520   0.1842
+
+Baseline (always 'up') Accuracy: 0.1895
+Best direction model: Logistic
+
+Next 5-Day Forecast (best price model: Linear Reg)
+  Day 1: ₦80.57  (Prob. Up: 0.26, Down)
+  Day 2: ₦81.03  (Prob. Up: 0.26, Down)
+  Day 3: ₦81.35  (Prob. Up: 0.26, Down)
+  Day 4: ₦81.61  (Prob. Up: 0.26, Down)
+  Day 5: ₦81.97  (Prob. Up: 0.26, Down)
+Overall trend: upward (avg forecast ₦81.31 vs. last close ₦80.00)
+Model Reliability: High
