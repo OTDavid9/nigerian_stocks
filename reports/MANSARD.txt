@@ -1,0 +1,84 @@
+Investment Analysis for MANSARD (NGX)
+============================================================
+
+Technical Analysis Report for MANSARD (NGX, NGN)
+------------------------------------------------------------
+Period: 2016-08-03 to 2026-07-31 (2469 trading days)
+Latest Close: 13.00
+Min: 0.70  Max: 19.48  Avg: 4.12
+
+Total Return: 550.0%
+Annualised Return: 21.05%
+Annualised Volatility: 99.17%
+
+Moving Averages:
+  SMA(50): 12.78 (Price vs SMA: 1.72%)
+  SMA(200): 14.24 (Price vs SMA: -8.71%)
+  MA Cross Signal: death_cross
+
+Recent Performance:
+  1m_change_pct: 8.33%
+  3m_change_pct: -7.14%
+  6m_change_pct: -18.19%
+  1y_change_pct: 11.11%
+
+RSI(14): 54.93
+
+MACD:
+  MACD Line: 0.1326
+  Signal Line: -0.0413
+  Histogram: 0.1738 (bullish (above signal))
+
+Max Drawdown: 76.19%
+
+Multi‑Model Predictive Analysis
+============================================================
+Validation: Walk‑forward (2458 samples, 5 folds)
+Features (tabular): lagged close prices at (1, 2, 3, 5, 10)
+
+--- Regression Models (Price Prediction) ---
+Model                     MAE     RMSE     MAPE       R²
+--------------------------------------------------------
+Ridge                  0.1536   0.3360     3.35%   0.9941
+Linear Reg             0.1540   0.3359     3.37%   0.9941
+ElasticNet             0.1743   0.3526     4.19%   0.9935
+Lasso                  0.1831   0.3533     4.56%   0.9934
+GradBoost              1.5634   2.8896    23.26%   0.5607
+DecisionTree           1.5837   2.9602    22.51%   0.5389
+KNN                    1.5842   2.9393    23.03%   0.5454
+RandomForest           1.5938   2.9700    22.75%   0.5359
+XGBoost                1.5953   2.9192    24.06%   0.5516
+CatBoost               1.6060   2.9930    22.94%   0.5286
+LightGBM               1.6364   3.0668    22.84%   0.5051
+ARIMA                  2.0170   3.1212    40.58%   0.4855
+Prophet                2.2749   2.8910    64.24%   0.5586
+SVR                    2.3216   4.1638    36.58%   0.0878
+
+Baseline (persistence) MAE: 0.1259
+Best price model: Ridge
+
+--- Classification Models (Direction Prediction) ---
+Model                     Acc     Prec      Rec       F1
+--------------------------------------------------------
+CatBoost               0.7291   0.2000   0.0093   0.0177
+KNN                    0.7183   0.1224   0.0111   0.0204
+DecisionTree           0.7154   0.1884   0.0241   0.0428
+LightGBM               0.7139   0.1034   0.0111   0.0201
+RandomForest           0.7032   0.3111   0.1039   0.1558
+XGBoost                0.6778   0.2500   0.1113   0.1540
+Logistic               0.6685   0.3185   0.2263   0.2646
+SVC                    0.6279   0.3475   0.4694   0.3994
+GaussianNB             0.6205   0.3553   0.5399   0.4286
+GradBoost              0.6191   0.3071   0.3544   0.3290
+
+Baseline (always 'up') Accuracy: 0.2555
+Best direction model: CatBoost
+
+Next 5-Day Forecast (best price model: Ridge)
+  Day 1: ₦12.91  (Prob. Up: 0.24, Down)
+  Day 2: ₦12.89  (Prob. Up: 0.24, Down)
+  Day 3: ₦12.88  (Prob. Up: 0.24, Down)
+  Day 4: ₦12.93  (Prob. Up: 0.24, Down)
+  Day 5: ₦12.95  (Prob. Up: 0.24, Down)
+Overall trend: downward (avg forecast ₦12.91 vs. last close ₦13.00)
+Model Reliability: High

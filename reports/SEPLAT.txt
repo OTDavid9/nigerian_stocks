@@ -1,0 +1,84 @@
+Investment Analysis for SEPLAT (NGX)
+============================================================
+
+Technical Analysis Report for SEPLAT (NGX, NGN)
+------------------------------------------------------------
+Period: 2016-08-03 to 2026-07-31 (2455 trading days)
+Latest Close: 11363.90
+Min: 240.00  Max: 11600.00  Avg: 2084.91
+
+Total Return: 4350.15%
+Annualised Return: 47.64%
+Annualised Volatility: 34.82%
+
+Moving Averages:
+  SMA(50): 11390.81 (Price vs SMA: -0.24%)
+  SMA(200): 8621.25 (Price vs SMA: 31.81%)
+  MA Cross Signal: golden_cross
+
+Recent Performance:
+  1m_change_pct: 0.0%
+  3m_change_pct: -1.14%
+  6m_change_pct: 69.61%
+  1y_change_pct: 108.51%
+
+RSI(14): 64.11
+
+MACD:
+  MACD Line: 5.5525
+  Signal Line: 8.4781
+  Histogram: -2.9256 (bearish (below signal))
+
+Max Drawdown: 64.08%
+
+Multi‑Model Predictive Analysis
+============================================================
+Validation: Walk‑forward (2444 samples, 5 folds)
+Features (tabular): lagged close prices at (1, 2, 3, 5, 10)
+
+--- Regression Models (Price Prediction) ---
+Model                     MAE     RMSE     MAPE       R²
+--------------------------------------------------------
+Lasso                 29.7762  87.7269     1.49%   0.9990
+ElasticNet            29.7762  87.7270     1.49%   0.9990
+Ridge                 29.7764  87.7268     1.49%   0.9990
+Linear Reg            29.7764  87.7269     1.49%   0.9990
+Prophet              656.2412 1028.2975    40.25%   0.8583
+RandomForest         665.5693 1473.4286    18.07%   0.7099
+CatBoost             665.7666 1469.6875    18.45%   0.7114
+KNN                  666.1196 1470.8680    18.30%   0.7109
+DecisionTree         669.9749 1473.2859    18.10%   0.7100
+GradBoost            671.2467 1472.9187    18.43%   0.7101
+LightGBM             672.3195 1484.2895    17.77%   0.7056
+XGBoost              673.7444 1482.7338    17.99%   0.7063
+ARIMA                825.7109 1624.5567    29.46%   0.6463
+SVR                  959.7474 2131.2496    24.43%   0.3931
+
+Baseline (persistence) MAE: 18.5423
+Best price model: Lasso
+
+--- Classification Models (Direction Prediction) ---
+Model                     Acc     Prec      Rec       F1
+--------------------------------------------------------
+Logistic               0.9233   0.0000   0.0000   0.0000
+CatBoost               0.9233   0.0000   0.0000   0.0000
+RandomForest           0.9229   0.4000   0.0128   0.0248
+LightGBM               0.9174   0.0714   0.0064   0.0118
+SVC                    0.9032   0.1132   0.0385   0.0574
+DecisionTree           0.8914   0.1084   0.0577   0.0753
+XGBoost                0.8821   0.0714   0.0449   0.0551
+GradBoost              0.8757   0.0992   0.0769   0.0866
+KNN                    0.8644   0.1104   0.1090   0.1097
+GaussianNB             0.8550   0.0629   0.0641   0.0635
+
+Baseline (always 'up') Accuracy: 0.1011
+Best direction model: Logistic
+
+Next 5-Day Forecast (best price model: Lasso)
+  Day 1: ₦11401.50  (Prob. Up: 0.01, Down)
+  Day 2: ₦11440.30  (Prob. Up: 0.01, Down)
+  Day 3: ₦11479.31  (Prob. Up: 0.01, Down)
+  Day 4: ₦11524.75  (Prob. Up: 0.01, Down)
+  Day 5: ₦11577.00  (Prob. Up: 0.01, Down)
+Overall trend: upward (avg forecast ₦11484.57 vs. last close ₦11363.90)
+Model Reliability: High

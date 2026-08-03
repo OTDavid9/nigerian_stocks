@@ -1,0 +1,84 @@
+Investment Analysis for UBA (NGX)
+============================================================
+
+Technical Analysis Report for UBA (NGX, NGN)
+------------------------------------------------------------
+Period: 2016-08-03 to 2026-07-31 (2471 trading days)
+Latest Close: 44.50
+Min: 4.01  Max: 55.00  Avg: 15.31
+
+Total Return: 880.18%
+Annualised Return: 26.21%
+Annualised Volatility: 41.93%
+
+Moving Averages:
+  SMA(50): 42.95 (Price vs SMA: 3.61%)
+  SMA(200): 43.51 (Price vs SMA: 2.28%)
+  MA Cross Signal: death_cross
+
+Recent Performance:
+  1m_change_pct: 17.11%
+  3m_change_pct: 4.09%
+  6m_change_pct: 0.45%
+  1y_change_pct: -10.28%
+
+RSI(14): 51.00
+
+MACD:
+  MACD Line: 1.1878
+  Signal Line: 1.1658
+  Histogram: 0.022 (bullish (above signal))
+
+Max Drawdown: 66.15%
+
+Multi‑Model Predictive Analysis
+============================================================
+Validation: Walk‑forward (2460 samples, 5 folds)
+Features (tabular): lagged close prices at (1, 2, 3, 5, 10)
+
+--- Regression Models (Price Prediction) ---
+Model                     MAE     RMSE     MAPE       R²
+--------------------------------------------------------
+Linear Reg             0.4647   0.9141     2.58%   0.9955
+Ridge                  0.4649   0.9143     2.58%   0.9955
+Lasso                  0.4660   0.9143     2.59%   0.9955
+ElasticNet             0.4678   0.9173     2.60%   0.9955
+XGBoost                3.3572   6.1017    12.81%   0.8011
+CatBoost               3.4947   6.3257    13.15%   0.7862
+KNN                    3.6501   6.5017    13.86%   0.7741
+GradBoost              3.6620   6.5228    13.77%   0.7726
+LightGBM               3.7316   6.6355    13.86%   0.7647
+DecisionTree           3.7542   6.6418    14.29%   0.7643
+RandomForest           3.8367   6.7880    14.17%   0.7538
+ARIMA                  5.3606   8.0951    30.75%   0.6491
+SVR                    5.9026  10.9125    19.90%   0.3637
+Prophet                6.1215   9.0721    52.89%   0.5593
+
+Baseline (persistence) MAE: 0.4094
+Best price model: Linear Reg
+
+--- Classification Models (Direction Prediction) ---
+Model                     Acc     Prec      Rec       F1
+--------------------------------------------------------
+Logistic               0.5483   0.4192   0.2089   0.2788
+RandomForest           0.5473   0.3894   0.1459   0.2122
+SVC                    0.5420   0.4390   0.3442   0.3859
+XGBoost                0.5420   0.3932   0.1762   0.2434
+CatBoost               0.5390   0.3824   0.1669   0.2323
+GradBoost              0.5366   0.4315   0.3419   0.3815
+KNN                    0.5332   0.4071   0.2555   0.3140
+DecisionTree           0.5263   0.4291   0.4026   0.4154
+LightGBM               0.5234   0.3819   0.2264   0.2842
+GaussianNB             0.5200   0.4424   0.5694   0.4980
+
+Baseline (always 'up') Accuracy: 0.4289
+Best direction model: Logistic
+
+Next 5-Day Forecast (best price model: Linear Reg)
+  Day 1: ₦44.69  (Prob. Up: 0.44, Down)
+  Day 2: ₦44.98  (Prob. Up: 0.44, Down)
+  Day 3: ₦45.15  (Prob. Up: 0.44, Down)
+  Day 4: ₦45.31  (Prob. Up: 0.44, Down)
+  Day 5: ₦45.36  (Prob. Up: 0.44, Down)
+Overall trend: upward (avg forecast ₦45.10 vs. last close ₦44.50)
+Model Reliability: Moderate

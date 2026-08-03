@@ -1,0 +1,84 @@
+Investment Analysis for UNILEVER (NGX)
+============================================================
+
+Technical Analysis Report for UNILEVER (NGX, NGN)
+------------------------------------------------------------
+Period: 2016-08-03 to 2026-07-31 (2471 trading days)
+Latest Close: 147.95
+Min: 9.90  Max: 172.00  Avg: 33.06
+
+Total Return: 322.71%
+Annualised Return: 15.84%
+Annualised Volatility: 43.63%
+
+Moving Averages:
+  SMA(50): 140.14 (Price vs SMA: 5.57%)
+  SMA(200): 102.04 (Price vs SMA: 44.99%)
+  MA Cross Signal: golden_cross
+
+Recent Performance:
+  1m_change_pct: 17.42%
+  3m_change_pct: 7.6%
+  6m_change_pct: 89.68%
+  1y_change_pct: 104.07%
+
+RSI(14): 100.00
+
+MACD:
+  MACD Line: 4.0001
+  Signal Line: 1.1384
+  Histogram: 2.8617 (bullish (above signal))
+
+Max Drawdown: 84.67%
+
+Multi‑Model Predictive Analysis
+============================================================
+Validation: Walk‑forward (2460 samples, 5 folds)
+Features (tabular): lagged close prices at (1, 2, 3, 5, 10)
+
+--- Regression Models (Price Prediction) ---
+Model                     MAE     RMSE     MAPE       R²
+--------------------------------------------------------
+Lasso                  0.7795   1.9845     2.43%   0.9953
+ElasticNet             0.7810   1.9863     2.43%   0.9953
+Ridge                  0.7833   1.9887     2.44%   0.9953
+Linear Reg             0.7834   1.9887     2.44%   0.9953
+GradBoost              6.6552  18.1317    13.82%   0.6090
+RandomForest           6.6749  18.1703    13.81%   0.6073
+KNN                    6.7430  17.8005    14.92%   0.6232
+LightGBM               6.7941  18.2342    14.75%   0.6046
+CatBoost               6.7975  17.9915    15.17%   0.6150
+XGBoost                6.8401  18.3755    14.38%   0.5984
+DecisionTree           7.1280  18.6136    15.54%   0.5879
+SVR                   10.3241  24.3907    27.51%   0.2925
+ARIMA                 15.9601  29.2720    37.98%  -0.0201
+Prophet               24.7333  40.2751    71.48%  -0.9312
+
+Baseline (persistence) MAE: 0.7412
+Best price model: Lasso
+
+--- Classification Models (Direction Prediction) ---
+Model                     Acc     Prec      Rec       F1
+--------------------------------------------------------
+Logistic               0.8190   0.1739   0.0112   0.0211
+LightGBM               0.7980   0.1184   0.0253   0.0417
+GaussianNB             0.7380   0.1610   0.1208   0.1380
+CatBoost               0.7107   0.1662   0.1657   0.1660
+KNN                    0.6761   0.1737   0.2303   0.1981
+XGBoost                0.6644   0.1640   0.2275   0.1906
+SVC                    0.6454   0.1596   0.2444   0.1931
+RandomForest           0.6171   0.1601   0.2837   0.2047
+DecisionTree           0.5961   0.1580   0.3062   0.2084
+GradBoost              0.5751   0.1607   0.3427   0.2188
+
+Baseline (always 'up') Accuracy: 0.1850
+Best direction model: Logistic
+
+Next 5-Day Forecast (best price model: Lasso)
+  Day 1: ₦150.31  (Prob. Up: 0.17, Down)
+  Day 2: ₦152.86  (Prob. Up: 0.17, Down)
+  Day 3: ₦154.36  (Prob. Up: 0.17, Down)
+  Day 4: ₦154.83  (Prob. Up: 0.17, Down)
+  Day 5: ₦155.14  (Prob. Up: 0.17, Down)
+Overall trend: upward (avg forecast ₦153.50 vs. last close ₦147.95)
+Model Reliability: High

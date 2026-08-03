@@ -1,0 +1,84 @@
+Investment Analysis for GUINNESS (NGX)
+============================================================
+
+Technical Analysis Report for GUINNESS (NGX, NGN)
+------------------------------------------------------------
+Period: 2016-08-03 to 2026-07-31 (2471 trading days)
+Latest Close: 376.00
+Min: 13.00  Max: 499.00  Avg: 85.51
+
+Total Return: 300.04%
+Annualised Return: 15.19%
+Annualised Volatility: 40.93%
+
+Moving Averages:
+  SMA(50): 369.44 (Price vs SMA: 1.78%)
+  SMA(200): 332.19 (Price vs SMA: 13.19%)
+  MA Cross Signal: golden_cross
+
+Recent Performance:
+  1m_change_pct: 2.87%
+  3m_change_pct: -24.35%
+  6m_change_pct: 7.46%
+  1y_change_pct: 221.23%
+
+RSI(14): 60.77
+
+MACD:
+  MACD Line: 2.1538
+  Signal Line: -3.914
+  Histogram: 6.0679 (bullish (above signal))
+
+Max Drawdown: 89.19%
+
+Multi‑Model Predictive Analysis
+============================================================
+Validation: Walk‑forward (2460 samples, 5 folds)
+Features (tabular): lagged close prices at (1, 2, 3, 5, 10)
+
+--- Regression Models (Price Prediction) ---
+Model                     MAE     RMSE     MAPE       R²
+--------------------------------------------------------
+Lasso                  1.8409   5.6562     2.18%   0.9961
+ElasticNet             1.8424   5.6567     2.18%   0.9961
+Ridge                  1.8460   5.6566     2.19%   0.9961
+Linear Reg             1.8462   5.6566     2.19%   0.9961
+RandomForest          25.8198  75.1976    18.20%   0.3140
+GradBoost             26.0505  75.2237    19.54%   0.3135
+CatBoost              26.0740  75.0107    19.91%   0.3174
+DecisionTree          26.0848  75.5322    18.48%   0.3079
+XGBoost               26.1154  75.0431    19.55%   0.3168
+KNN                   26.2289  75.0805    19.95%   0.3161
+LightGBM              26.3083  75.8209    19.65%   0.3026
+SVR                   31.0657  89.0902    21.81%   0.0371
+ARIMA                 47.0820  94.7540    48.02%  -0.0918
+Prophet               65.3919 104.9982    96.85%  -0.3407
+
+Baseline (persistence) MAE: 1.5862
+Best price model: Lasso
+
+--- Classification Models (Direction Prediction) ---
+Model                     Acc     Prec      Rec       F1
+--------------------------------------------------------
+Logistic               0.8780   0.0000   0.0000   0.0000
+SVC                    0.8351   0.2930   0.2530   0.2716
+CatBoost               0.8302   0.2876   0.2691   0.2780
+RandomForest           0.8288   0.2839   0.2691   0.2763
+DecisionTree           0.8205   0.2667   0.2731   0.2698
+LightGBM               0.8161   0.2576   0.2731   0.2651
+XGBoost                0.8088   0.2509   0.2892   0.2687
+GradBoost              0.8059   0.2422   0.2811   0.2602
+GaussianNB             0.7780   0.1098   0.1165   0.1131
+KNN                    0.7137   0.1712   0.3534   0.2307
+
+Baseline (always 'up') Accuracy: 0.1472
+Best direction model: Logistic
+
+Next 5-Day Forecast (best price model: Lasso)
+  Day 1: ₦377.21  (Prob. Up: 0.07, Down)
+  Day 2: ₦378.92  (Prob. Up: 0.07, Down)
+  Day 3: ₦381.07  (Prob. Up: 0.07, Down)
+  Day 4: ₦382.56  (Prob. Up: 0.07, Down)
+  Day 5: ₦383.98  (Prob. Up: 0.07, Down)
+Overall trend: upward (avg forecast ₦380.75 vs. last close ₦376.00)
+Model Reliability: High

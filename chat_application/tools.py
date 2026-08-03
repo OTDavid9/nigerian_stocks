@@ -1,195 +1,69 @@
-tools = [
-    {
-        "type": "function",
-        "name": "order_items",
-        "description": "Fetch details about products, including price, availability, and specifications.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "product_name": {
-                    "type": "string",
-                    "description": "The name of the product to search for."
-                }
-            },
-            "required": ["product_name"],
-            "additionalProperties": False
-        }
-    },
-    {
-        "type": "function",
-        "name": "make_purchase",
-        "description": "Process a purchase order after the user confirms the product details.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "product_name": {
-                    "type": "string",
-                    "description": "The name of the product to purchase."
-                },
-                "quantity": {
-                    "type": "integer",
-                    "description": "The number of units the user wants to purchase."
-                },
-                "price": {
-                    "type": "number",
-                    "description": "The total price of the product(s) to charge the user."
-                }
-            },
-            "required": ["product_name", "quantity", "price"],
-            "additionalProperties": False
-        }
-    },
-    {
-        "type": "function",
-        "name": "create_profile",
-        "description": "Create a new user profile.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "username": {
-                    "type": "string",
-                    "description": "A unique username for the user."
-                },
-                "name": {
-                    "type": "string",
-                    "description": "The user's full name."
-                },
-                "email": {
-                    "type": "string",
-                    "description": "The user's email address."
-                },
-                "age": {
-                    "type": "integer",
-                    "description": "The user's age."
-                }
-            },
-            "required": ["username", "name", "email", "age"],
-            "additionalProperties": False
-        }
-    },
-    {
-        "type": "function",
-        "name": "get_profile",
-        "description": "Retrieve an existing user profile using the username.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "username": {
-                    "type": "string",
-                    "description": "The username of the profile to retrieve."
-                }
-            },
-            "required": ["username"],
-            "additionalProperties": False
-        }
-    },
-    {
-        "type": "function",
-        "name": "update_profile",
-        "description": "Update an existing user's profile.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "username": {
-                    "type": "string",
-                    "description": "The username of the profile to update."
-                },
-                "name": {
-                    "type": "string",
-                    "description": "The user's full name."
-                },
-                "email": {
-                    "type": "string",
-                    "description": "The user's email address."
-                },
-                "age": {
-                    "type": "integer",
-                    "description": "The user's age."
-                }
-            },
-            "required": ["username", "name", "email", "age"],
-            "additionalProperties": False
-        }
-    }
-]
-
-ollama_tools = [
+# ------------------------------------------------------------------
+# 3. OPENAI FUNCTION DEFINITIONS (the schema)
+# ------------------------------------------------------------------
+ollama_tools= [
     {
         "type": "function",
         "function": {
-            "name": "create_profile",
-            "description": "Create a new user profile.",
+            "name": "get_predictive_report",
+            "description": "Get the latest AI predictive report for an NGX stock. Contains technical indicators, model comparison, 5-day price forecast, and reliability assessment. Use when the user asks about a stock's outlook or recommendation.",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "username": {"type": "string", "description": "Unique username of the user."},
-                    "name": {"type": "string", "description": "Full name of the user."},
-                    "email": {"type": "string", "description": "Email address of the user."},
-                    "age": {"type": "integer", "description": "Age of the user."}
+                    "symbol": {
+                        "type": "string",
+                        "description": "The NGX stock ticker symbol, e.g. 'GTCO', 'DANGCEM'"
+                    }
                 },
-                "required": ["username", "name", "email", "age"]
+                "required": ["symbol"]
             }
         }
     },
     {
         "type": "function",
         "function": {
-            "name": "get_profile",
-            "description": "Retrieve an existing user profile by username.",
+            "name": "search_documents",
+            "description": "Search uploaded financial statements (annual reports, filings) for relevant passages. Use when the user asks a specific question about a company’s financials or notes.",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "username": {"type": "string", "description": "Unique username of the user."}
+                    "query": {
+                        "type": "string",
+                        "description": "Natural language question or search phrase, e.g. 'What was the revenue in 2025?'"
+                    }
                 },
-                "required": ["username"]
+                "required": ["query"]
             }
         }
     },
     {
         "type": "function",
         "function": {
-            "name": "update_profile",
-            "description": "Update an existing user profile.",
+            "name": "calculate_ratio",
+            "description": "Retrieve a pre-calculated financial ratio for a stock. Available ratios: current_ratio, quick_ratio, debt_to_equity, return_on_assets, return_on_equity, earnings_per_share, price_to_earnings, dividend_yield.",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "username": {"type": "string", "description": "Unique username of the user."},
-                    "name": {"type": "string", "description": "Full name of the user."},
-                    "email": {"type": "string", "description": "Email address of the user."},
-                    "age": {"type": "integer", "description": "Age of the user."}
+                    "symbol": {
+                        "type": "string",
+                        "description": "Stock ticker, e.g. 'ZENITHBANK'"
+                    },
+                    "ratio_name": {
+                        "type": "string",
+                        "enum": [
+                            "current_ratio",
+                            "quick_ratio",
+                            "debt_to_equity",
+                            "return_on_assets",
+                            "return_on_equity",
+                            "earnings_per_share",
+                            "price_to_earnings",
+                            "dividend_yield"
+                        ],
+                        "description": "The ratio to fetch."
+                    }
                 },
-                "required": ["username", "name", "email", "age"]
-            }
-        }
-    },
-{
-        "type": "function",
-        "function": {
-            "name": "make_purchase",
-            "description": "This function is meant to make purchase of items ",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "item_name": {"type": "string"}
-                },
-                "required": ["item_name"]
-            }
-        }
-    },
-
-    {
-        "type": "function",
-        "function": {
-            "name": "order_items",
-            "description": "This function is meant to make order of items ",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "item_name": {"type": "string"},
-                    "quantity": {"type": "integer"},
-
-                },
-                "required": ["item_name", "quantity"]
+                "required": ["symbol", "ratio_name"]
             }
         }
     }

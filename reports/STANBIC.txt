@@ -1,0 +1,84 @@
+Investment Analysis for STANBIC (NGX)
+============================================================
+
+Technical Analysis Report for STANBIC (NGX, NGN)
+------------------------------------------------------------
+Period: 2016-08-03 to 2026-07-31 (2470 trading days)
+Latest Close: 159.00
+Min: 13.25  Max: 188.55  Avg: 51.43
+
+Total Return: 1100.0%
+Annualised Return: 28.86%
+Annualised Volatility: 37.98%
+
+Moving Averages:
+  SMA(50): 165.04 (Price vs SMA: -3.66%)
+  SMA(200): 134.15 (Price vs SMA: 18.52%)
+  MA Cross Signal: golden_cross
+
+Recent Performance:
+  1m_change_pct: -2.45%
+  3m_change_pct: -3.64%
+  6m_change_pct: 47.22%
+  1y_change_pct: 57.43%
+
+RSI(14): 37.63
+
+MACD:
+  MACD Line: -0.5575
+  Signal Line: -0.2678
+  Histogram: -0.2897 (bearish (below signal))
+
+Max Drawdown: 55.21%
+
+Multi‑Model Predictive Analysis
+============================================================
+Validation: Walk‑forward (2459 samples, 5 folds)
+Features (tabular): lagged close prices at (1, 2, 3, 5, 10)
+
+--- Regression Models (Price Prediction) ---
+Model                     MAE     RMSE     MAPE       R²
+--------------------------------------------------------
+Lasso                  1.2017   2.5553     2.02%   0.9932
+ElasticNet             1.2029   2.5571     2.02%   0.9932
+Linear Reg             1.2033   2.5570     2.02%   0.9932
+Ridge                  1.2034   2.5571     2.02%   0.9932
+LightGBM               8.8791  20.8132     9.37%   0.5481
+DecisionTree           8.9821  20.6369     9.76%   0.5557
+RandomForest           9.1208  21.2281     9.65%   0.5299
+KNN                    9.1223  20.8269     9.93%   0.5475
+CatBoost               9.6217  21.7854    10.38%   0.5049
+XGBoost                9.6437  21.9634    10.32%   0.4967
+GradBoost              9.6617  21.8679    10.40%   0.5011
+SVR                   13.0261  30.4500    12.89%   0.0327
+ARIMA                 17.4634  30.1149    24.30%   0.0495
+Prophet               24.9977  31.3852    46.78%  -0.0324
+
+Baseline (persistence) MAE: 1.0073
+Best price model: Lasso
+
+--- Classification Models (Direction Prediction) ---
+Model                     Acc     Prec      Rec       F1
+--------------------------------------------------------
+CatBoost               0.8039   0.3571   0.0126   0.0243
+Logistic               0.8029   0.3333   0.0151   0.0289
+LightGBM               0.7711   0.1743   0.0479   0.0751
+SVC                    0.7623   0.1844   0.0655   0.0967
+XGBoost                0.7433   0.2241   0.1310   0.1653
+KNN                    0.7320   0.2107   0.1385   0.1672
+GaussianNB             0.7311   0.1475   0.0806   0.1042
+RandomForest           0.6905   0.1758   0.1612   0.1682
+DecisionTree           0.6714   0.1734   0.1839   0.1785
+GradBoost              0.6621   0.1818   0.2116   0.1956
+
+Baseline (always 'up') Accuracy: 0.2200
+Best direction model: CatBoost
+
+Next 5-Day Forecast (best price model: Lasso)
+  Day 1: ₦159.93  (Prob. Up: 0.20, Down)
+  Day 2: ₦161.66  (Prob. Up: 0.20, Down)
+  Day 3: ₦163.09  (Prob. Up: 0.20, Down)
+  Day 4: ₦164.24  (Prob. Up: 0.20, Down)
+  Day 5: ₦164.86  (Prob. Up: 0.20, Down)
+Overall trend: upward (avg forecast ₦162.76 vs. last close ₦159.00)
+Model Reliability: High

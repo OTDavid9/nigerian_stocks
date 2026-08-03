@@ -1,0 +1,84 @@
+Investment Analysis for NESTLE (NGX)
+============================================================
+
+Technical Analysis Report for NESTLE (NGX, NGN)
+------------------------------------------------------------
+Period: 2016-08-03 to 2026-07-31 (2471 trading days)
+Latest Close: 2812.50
+Min: 570.00  Max: 3395.00  Avg: 1328.40
+
+Total Return: 242.99%
+Annualised Return: 13.39%
+Annualised Volatility: 30.01%
+
+Moving Averages:
+  SMA(50): 3075.00 (Price vs SMA: -8.54%)
+  SMA(200): 2607.71 (Price vs SMA: 7.85%)
+  MA Cross Signal: golden_cross
+
+Recent Performance:
+  1m_change_pct: -10.0%
+  3m_change_pct: -9.27%
+  6m_change_pct: 30.58%
+  1y_change_pct: 48.81%
+
+RSI(14): 0.95
+
+MACD:
+  MACD Line: -87.2715
+  Signal Line: -63.1333
+  Histogram: -24.1382 (bearish (below signal))
+
+Max Drawdown: 52.7%
+
+Multi‑Model Predictive Analysis
+============================================================
+Validation: Walk‑forward (2460 samples, 5 folds)
+Features (tabular): lagged close prices at (1, 2, 3, 5, 10)
+
+--- Regression Models (Price Prediction) ---
+Model                     MAE     RMSE     MAPE       R²
+--------------------------------------------------------
+Lasso                 18.0792  42.4206     1.28%   0.9928
+Ridge                 18.0792  42.4205     1.28%   0.9928
+Linear Reg            18.0792  42.4206     1.28%   0.9928
+ElasticNet            18.0792  42.4206     1.28%   0.9928
+LightGBM             134.4953 385.1214     5.92%   0.4100
+RandomForest         135.1498 386.7426     5.94%   0.4050
+DecisionTree         138.8568 383.7275     6.37%   0.4143
+CatBoost             139.2633 391.0029     6.24%   0.3918
+KNN                  139.5066 382.0198     6.44%   0.4195
+XGBoost              145.1430 403.1690     6.48%   0.3534
+GradBoost            145.1943 410.3253     6.38%   0.3303
+SVR                  167.0191 497.7520     6.87%   0.0144
+ARIMA                345.6526 639.7412    20.56%  -0.6320
+Prophet              526.4986 801.9854    33.49%  -1.5647
+
+Baseline (persistence) MAE: 15.0874
+Best price model: Lasso
+
+--- Classification Models (Direction Prediction) ---
+Model                     Acc     Prec      Rec       F1
+--------------------------------------------------------
+CatBoost               0.9093   0.0000   0.0000   0.0000
+SVC                    0.9088   0.3333   0.0054   0.0106
+Logistic               0.8971   0.1429   0.0269   0.0452
+LightGBM               0.8790   0.2182   0.1290   0.1622
+XGBoost                0.8605   0.1951   0.1720   0.1829
+GradBoost              0.8590   0.2057   0.1935   0.1994
+KNN                    0.8107   0.1203   0.1720   0.1416
+RandomForest           0.7990   0.1021   0.1559   0.1234
+DecisionTree           0.7498   0.1171   0.2688   0.1631
+GaussianNB             0.6790   0.1590   0.5914   0.2506
+
+Baseline (always 'up') Accuracy: 0.1264
+Best direction model: CatBoost
+
+Next 5-Day Forecast (best price model: Lasso)
+  Day 1: ₦2805.49  (Prob. Up: 0.09, Down)
+  Day 2: ₦2797.88  (Prob. Up: 0.09, Down)
+  Day 3: ₦2796.12  (Prob. Up: 0.09, Down)
+  Day 4: ₦2794.56  (Prob. Up: 0.09, Down)
+  Day 5: ₦2793.27  (Prob. Up: 0.09, Down)
+Overall trend: downward (avg forecast ₦2797.47 vs. last close ₦2812.50)
+Model Reliability: High
