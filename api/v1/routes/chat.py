@@ -5,6 +5,7 @@ from jose import JWTError, jwt
 from core.security import JWT_SECRET, JWT_ALGORITHM
 from core.database import users_collection
 import json
+import uuid
 
 router = APIRouter(
     prefix="/chat",

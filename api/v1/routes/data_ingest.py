@@ -387,21 +387,21 @@ async def run_bulk_full_analysis(payload: SymbolList):
 #     }
 
 
-# @router.get("/report/{symbol}")
-# async def get_latest_report(symbol: str):
-#     """
-#     Retrieve the latest predictive report for a given NGX symbol.
-#     Returns the full structured document (text, metrics, forecast, etc.).
-#     """
-#     symbol = symbol.upper()
-#     doc = stocks_reports.find_one(
-#         {"symbol": symbol},
-#         sort=[("created_at", -1)]
-#     )
-#     if not doc:
-#         raise HTTPException(
-#             status_code=404,
-#             detail=f"No report found for symbol '{symbol}'. Run the analysis first."
-#         )
-#     doc["_id"] = str(doc["_id"])
-#     return doc
+@router.get("/report/{symbol}")
+async def get_latest_report(symbol: str):
+    """
+    Retrieve the latest predictive report for a given NGX symbol.
+    Returns the full structured document (text, metrics, forecast, etc.).
+    """
+    symbol = symbol.upper()
+    doc = stocks_reports.find_one(
+        {"symbol": symbol},
+        sort=[("created_at", -1)]
+    )
+    if not doc:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No report found for symbol '{symbol}'. Run the analysis first."
+        )
+    doc["_id"] = str(doc["_id"])
+    return doc
