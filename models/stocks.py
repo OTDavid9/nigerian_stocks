@@ -64,3 +64,10 @@ class BatchHistoryResponse(BaseModel):
 # ---------------------------------------------------------------------------
 # Simple in‑memory cache
 # ---------------------------------------------------------------------------
+class Symbol(BaseModel):
+    symbol: str
+
+
+
+class SymbolList(BaseModel):
+    symbols: List[str]  # e.g., ["DANGCEM", "GTCO", "ZENITHBANK"]
