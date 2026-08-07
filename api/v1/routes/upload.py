@@ -199,6 +199,9 @@ async def upload_document(
 
     result = users_documents.insert_one(document)
 
+    with open(f"uploads/{file.filename}", "wb") as f:
+        f.write(content)
+
     return JSONResponse(
         {
             "id": str(result.inserted_id),

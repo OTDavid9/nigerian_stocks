@@ -21,6 +21,7 @@ from services.ngx_analysis import (
     NGXStockAnalyzer,
     NGXStockPredictor,
 )
+from models.stocks import Symbol, SymbolList
 
 router = APIRouter(prefix="/data-ingest", tags=["Data Ingest"])
 
@@ -270,23 +271,59 @@ def run_analysis_for_stock(symbol: str, company_name: str) -> dict:
 # ---------------------------------------------------------------------
 # ENDPOINTS
 # ---------------------------------------------------------------------
-
-@router.post("/run")
-async def run_full_analysis():
+@router.post("/run-single-analysis")
+async def run_single_full_analysis(symbol: Symbol):
     """
-    Trigger the full analysis for all 146 NGX stocks.
+    Trigger the full analysis for a single NGX stock.
+    Writes the structured report to MongoDB.
+    """
+    symbol_str = symbol.symbol.upper()  # Normalize
+    company_name = TICKER_TO_COMPANY.get(symbol_str)
+    if not company_name:
+        raise HTTPException(status_code=404, detail=f"Symbol '{symbol_str}' not found in company mapping")
+
+    try:
+        doc = run_analysis_for_stock(symbol_str, company_name)
+        # Ensure document is BSON‑safe
+        stocks_reports.replace_one(
+            {"symbol": symbol_str},
+            doc,
+            upsert=True
+        )
+        return {
+            "message": "Analysis completed",
+            "symbol": symbol_str,
+            "company_name": company_name,
+            "mape": round(doc["mape"], 2),
+            "accuracy": round(doc["accuracy"], 4),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+
+
+
+@router.post("/run-bulk-analysis")
+async def run_bulk_full_analysis(payload: SymbolList):
+    """
+    Trigger the full analysis for multiple NGX stocks.
     Writes the structured reports to MongoDB.
-    No request body required.
     """
     processed = []
     errors = []
 
-    for symbol, company_name in TICKER_TO_COMPANY.items():
+    for symbol in payload.symbols:
+        symbol = symbol.upper().strip()
+        company_name = TICKER_TO_COMPANY.get(symbol)
+        if not company_name:
+            errors.append({"symbol": symbol, "error": "Symbol not found in company mapping"})
+            continue
+
         try:
             doc = run_analysis_for_stock(symbol, company_name)
-            # The document is already BSON-safe, but ensure all keys are strings
             stocks_reports.replace_one(
-                {"symbol": symbol.upper()},
+                {"symbol": symbol},
                 doc,
                 upsert=True
             )
@@ -298,34 +335,73 @@ async def run_full_analysis():
             })
             print(f"  ✓ {symbol} done. MAPE={doc['mape']:.2f}%, Acc={doc['accuracy']:.2%}")
         except Exception as e:
-            print(f"  ✗ {symbol} FAILED: {e}")
             traceback.print_exc()
             errors.append({"symbol": symbol, "error": str(e)})
 
     return {
-        "message": "Full analysis completed",
+        "message": "Bulk analysis completed",
         "processed_count": len(processed),
         "error_count": len(errors),
+        "processed": processed,
         "errors": errors,
         "timestamp": datetime.utcnow().isoformat()
     }
 
+# @router.post("/run")
+# async def run_all_full_analysis():
+#     """
+#     Trigger the full analysis for all 146 NGX stocks.
+#     Writes the structured reports to MongoDB.
+#     No request body required.
+#     """
+#     processed = []
+#     errors = []
 
-@router.get("/report/{symbol}")
-async def get_latest_report(symbol: str):
-    """
-    Retrieve the latest predictive report for a given NGX symbol.
-    Returns the full structured document (text, metrics, forecast, etc.).
-    """
-    symbol = symbol.upper()
-    doc = stocks_reports.find_one(
-        {"symbol": symbol},
-        sort=[("created_at", -1)]
-    )
-    if not doc:
-        raise HTTPException(
-            status_code=404,
-            detail=f"No report found for symbol '{symbol}'. Run the analysis first."
-        )
-    doc["_id"] = str(doc["_id"])
-    return doc
+#     for symbol, company_name in TICKER_TO_COMPANY.items():
+#         try:
+#             doc = run_analysis_for_stock(symbol, company_name)
+#             # The document is already BSON-safe, but ensure all keys are strings
+#             stocks_reports.replace_one(
+#                 {"symbol": symbol.upper()},
+#                 doc,
+#                 upsert=True
+#             )
+#             processed.append({
+#                 "symbol": symbol,
+#                 "company_name": company_name,
+#                 "mape": round(doc["mape"], 2),
+#                 "accuracy": round(doc["accuracy"], 4),
+#             })
+#             print(f"  ✓ {symbol} done. MAPE={doc['mape']:.2f}%, Acc={doc['accuracy']:.2%}")
+#         except Exception as e:
+#             print(f"  ✗ {symbol} FAILED: {e}")
+#             traceback.print_exc()
+#             errors.append({"symbol": symbol, "error": str(e)})
+
+#     return {
+#         "message": "Full analysis completed",
+#         "processed_count": len(processed),
+#         "error_count": len(errors),
+#         "errors": errors,
+#         "timestamp": datetime.utcnow().isoformat()
+#     }
+
+
+# @router.get("/report/{symbol}")
+# async def get_latest_report(symbol: str):
+#     """
+#     Retrieve the latest predictive report for a given NGX symbol.
+#     Returns the full structured document (text, metrics, forecast, etc.).
+#     """
+#     symbol = symbol.upper()
+#     doc = stocks_reports.find_one(
+#         {"symbol": symbol},
+#         sort=[("created_at", -1)]
+#     )
+#     if not doc:
+#         raise HTTPException(
+#             status_code=404,
+#             detail=f"No report found for symbol '{symbol}'. Run the analysis first."
+#         )
+#     doc["_id"] = str(doc["_id"])
+#     return doc
