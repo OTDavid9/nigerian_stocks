@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from core.database import users_collection
 from models.auth import UserCreate, UserLogin
 from core.security import hash_password, verify_password, create_access_token

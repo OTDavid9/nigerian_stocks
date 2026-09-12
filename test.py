@@ -1,239 +1,342 @@
-import os
-from pymongo import MongoClient
-from pymongo.server_api import ServerApi
-from dotenv import load_dotenv
-load_dotenv()
-
-db_password = os.getenv("DATABASE_PASSWORD")
+from openai import OpenAI
+import json
+import ast
+import operator
+from typing import Any, Callable
 
 
-uri = f"mongodb://tunjiobidokun:{db_password}@ac-uedmrkm-shard-00-00.qhgc4h8.mongodb.net:27017,ac-uedmrkm-shard-00-01.qhgc4h8.mongodb.net:27017,ac-uedmrkm-shard-00-02.qhgc4h8.mongodb.net:27017/?ssl=true&replicaSet=atlas-le2bcg-shard-0&authSource=admin&appName=Cluster0"
-print(uri)
-# Create a new client and connect to the server
-client = MongoClient(uri, server_api=ServerApi('1'))
+class StockAgent:
+    """
+    OOP wrapper around Ollama's OpenAI-compatible Responses API.
 
-# Send a ping to confirm a successful connection
-try:
-    client.admin.command('ping')
-    print("Pinged your deployment. You successfully connected to MongoDB!")
-except Exception as e:
-    print(e)
-# import os
-# import re
-# import time
-# import json
-# from typing import List, Dict
-# import requests
-# from dotenv import load_dotenv
+    Responsibilities:
+    - Maintain system prompt
+    - Maintain conversation history
+    - Send requests to Ollama
+    - Execute tools
+    - Feed tool results back to the model
+    - Return the final response
+    """
 
-# load_dotenv()
+    def __init__(
+        self,
+        api_key: str,
+        model: str = "gemma4:31b-cloud",
+        base_url: str = "https://ollama.com/v1",
+        system_prompt: str | None = None,
+    ):
+        self.client = OpenAI(
+            base_url=base_url,
+            api_key=api_key,
+        )
 
-# SCRAPER_API_KEY = os.getenv("SCRAPER_API_KEY")
-# BASE_URL = "https://africanfinancials.com"
+        self.model = model
 
+        self.system_prompt = system_prompt or """
+You are a helpful AI assistant.
 
-# def scraperapi_get(url: str, render: bool = False) -> str:
-#     payload = {
-#         "api_key": SCRAPER_API_KEY,
-#         "url": url,
-#         "keep_headers": "true",
-#         "country_code": "us",
-#         "render": "true" if render else "false",
-#     }
-#     resp = requests.get("https://api.scraperapi.com/", params=payload, timeout=60)
-#     resp.raise_for_status()
-#     return resp.text
+You have access to tools that you can use when necessary.
 
+Rules:
+1. Use tools when they are required to answer the user's request.
+2. Never invent the result of a tool call.
+3. If a tool fails, clearly explain the failure.
+4. Use previous conversation context when answering.
+5. Be concise but useful.
+6. Do not expose internal tool execution details unless necessary.
+"""
 
-# def extract_clean_text(html: str) -> str:
-#     """
-#     Extract clean LLM-ready text from AfricanFinancials HTML.
-#     FIXED: Uses body extraction + tag stripping instead of broken regex selectors.
-#     """
-#     # 1. Remove scripts, styles, nav, footer, header, aside
-#     for tag in ["script", "style", "nav", "footer", "header", "aside"]:
-#         html = re.sub(rf"<{tag}[^>]*>.*?</{tag}>", "", html, flags=re.DOTALL | re.IGNORECASE)
+        # Conversation history
+        self.history: list[dict[str, Any]] = []
 
-#     # 2. Extract body content (the actual page content is in the body)
-#     body_match = re.search(r"<body[^>]*>(.*?)</body>", html, re.DOTALL | re.IGNORECASE)
-#     content = body_match.group(1) if body_match else html
+        # Tool definitions
+        self.tools = [
+            {
+                "type": "function",
+                "name": "get_horoscope",
+                "description": "Get today's horoscope for an astrological sign.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "sign": {
+                            "type": "string",
+                            "description": "An astrological sign like Taurus or Aquarius",
+                        }
+                    },
+                    "required": ["sign"],
+                },
+            },
+            {
+                "type": "function",
+                "name": "get_weather",
+                "description": "Get the current weather for a city.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "city": {
+                            "type": "string",
+                            "description": "The city to get weather information for",
+                        }
+                    },
+                    "required": ["city"],
+                },
+            },
+            {
+                "type": "function",
+                "name": "calculate",
+                "description": "Perform a mathematical calculation.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "expression": {
+                            "type": "string",
+                            "description": "A mathematical expression",
+                        }
+                    },
+                    "required": ["expression"],
+                },
+            },
+        ]
 
-#     # 3. Strip all remaining HTML tags
-#     text = re.sub(r"<[^>]+>", " ", content)
+        # Map tool names to Python functions
+        self.available_tools: dict[str, Callable] = {
+            "get_horoscope": self.get_horoscope,
+            "get_weather": self.get_weather,
+            "calculate": self.calculate,
+        }
 
-#     # 4. Decode HTML entities
-#     for old, new in [
-#         ("&nbsp;", " "), ("&amp;", "&"), ("&lt;", "<"), ("&gt;", ">"),
-#         ("&quot;", '"'), ("&#39;", "'"), ("&#8217;", "'"), ("&#8211;", "–"),
-#         ("&#8212;", "—"), ("&#8220;", '"'), ("&#8221;", '"'), ("&#8230;", "..."),
-#         ("&#8243;", '"'), ("&#x27;", "'"), ("&rsquo;", "'"), ("&lsquo;", "'"),
-#         ("&rdquo;", '"'), ("&ldquo;", '"'), ("&ndash;", "–"), ("&mdash;", "—"),
-#         ("&#8216;", "'"), ("&#8242;", "'"),
-#     ]:
-#         text = text.replace(old, new)
+    # =========================================================
+    # TOOLS
+    # =========================================================
 
-#     # 5. Collapse whitespace
-#     text = re.sub(r"\s+", " ", text)
+    def get_horoscope(self, sign: str):
+        return {
+            "sign": sign,
+            "horoscope": (
+                f"{sign}: Next Tuesday you will befriend a baby otter."
+            ),
+        }
 
-#     # 6. Split into sentences and filter junk
-#     sentences = re.split(r'(?<=[.!?])\s+', text)
-#     cleaned = []
-#     for sent in sentences:
-#         sent = sent.strip()
-#         if not sent or len(sent) < 15:
-#             continue
-#         low = sent.lower()
-#         # Skip CSS/JS junk, nav elements, and font definitions
-#         if any(junk in low for junk in [
-#             "cloudflare", "access denied", "performance & security",
-#             "cookie policy", "privacy policy", "all rights reserved",
-#             "enable javascript", "captcha", "challenge platform",
-#             "fusion-fullwidth", "fusion-builder-row", "data-orig-src",
-#             "lazyload", "img-responsive", "decoding=", "base64",
-#             "var ", "function(", "window.", "document.", "jquery",
-#             "click to share", "share on", "tweet this", "email this",
-#             "avada", "wp-embed", "wp-content", "font-family:",
-#             "@font-face", "unicode-range", "src: url", "woff2",
-#             "toggle navigation", "search toggle", "advertise alerts",
-#             "skip to content", "font-display", "speak: never",
-#             'content: "', "linear-gradient", "box-shadow",
-#             "transition:", "transform:", "flex-direction",
-#             "align-items:", "justify-content", "max-width:",
-#             "padding:", "margin:", "border:", "background:",
-#             "display:", "position:", "z-index:", "opacity:",
-#             "width:", "height:", "color:", "font-size:",
-#             "line-height:", "text-align", "vertical-align",
-#             "pointer-events", "overflow:", "visibility:",
-#             "keyframes", "animation:", "media only screen",
-#             "min-device-width", "max-device-width",
-#         ]):
-#             continue
-#         # Skip font/CSS class names (all lowercase no spaces, often with dashes)
-#         if " " not in sent and "-" in sent and sent.islower():
-#             continue
-#         cleaned.append(sent)
+    def get_weather(self, city: str):
+        # Replace this with a real API later
+        return {
+            "city": city,
+            "temperature": "27°C",
+            "condition": "Partly cloudy",
+        }
 
-#     return " ".join(cleaned)
+    def calculate(self, expression: str):
 
+        # Safe-ish calculator for basic arithmetic.
+        # Avoid eval() in production.
 
-# def get_company_reports(company_slug: str, year: int = 2025) -> List[Dict]:
-#     """
-#     Fetch all report types for a given company slug and year.
+        allowed_operators = {
+            ast.Add: operator.add,
+            ast.Sub: operator.sub,
+            ast.Mult: operator.mul,
+            ast.Div: operator.truediv,
+            ast.Pow: operator.pow,
+            ast.Mod: operator.mod,
+        }
 
-#     Args:
-#         company_slug: URL slug, e.g. 'gtco', 'oando', 'zenithbank'
-#         year: Report year. Pass 2025 or 2026.
+        def evaluate(node):
 
-#     Returns:
-#         List of dicts with clean text content
-#     """
-#     doc_types = {
-#         "ar": "Annual Report",
-#         "ab": "Abridged Report",
-#         # "ir-hy": "Half-Year Interim",
-#         # "ir-q1": "Q1 Interim",
-#         # "ir-q2": "Q2 Interim",
-#         # "ir-q3": "Q3 Interim",
-#         "pr": "Presentation",
-#     }
+            if isinstance(node, ast.Expression):
+                return evaluate(node.body)
 
-#     reports = []
+            if isinstance(node, ast.Constant):
+                if isinstance(node.value, (int, float)):
+                    return node.value
+                raise ValueError("Invalid constant")
 
-#     for doc_code, doc_name in doc_types.items():
-#         url = f"{BASE_URL}/document/ng-{company_slug}-{year}-{doc_code}-00/"
-#         print(f"[TRY] {doc_name}: {url}")
+            if isinstance(node, ast.BinOp):
+                left = evaluate(node.left)
+                right = evaluate(node.right)
 
-#         try:
-#             html = scraperapi_get(url, render=False)
+                operator_function = allowed_operators.get(type(node.op))
 
-#             # Validation
-#             if len(html) < 1000:
-#                 print("  SKIP: Empty response")
-#                 continue
-#             if "Cloudflare" in html and len(html) < 15000:
-#                 print("  SKIP: Cloudflare block")
-#                 continue
+                if operator_function is None:
+                    raise ValueError("Operator not allowed")
 
-#             title_match = re.search(r"<title>(.*?)</title>", html, re.IGNORECASE)
-#             page_title = title_match.group(1).strip() if title_match else ""
+                return operator_function(left, right)
 
-#             # Extract clean text
-#             content = extract_clean_text(html)
+            if isinstance(node, ast.UnaryOp):
+                operand = evaluate(node.operand)
 
-#             if len(content) < 200:
-#                 print(f"  SKIP: Too little content ({len(content)} chars)")
-#                 continue
+                if isinstance(node.op, ast.USub):
+                    return -operand
 
-#             reports.append({
-#                 "title": page_title or f"ng-{company_slug}-{year}-{doc_code}-00",
-#                 "url": url,
-#                 "year": year,
-#                 "doc_type": doc_name,
-#                 "doc_code": doc_code,
-#                 "content": content,
-#                 "word_count": len(content.split()),
-#             })
-#             print(f"  SUCCESS: {len(content.split())} words")
+                if isinstance(node.op, ast.UAdd):
+                    return operand
 
-#         except requests.HTTPError as e:
-#             status = e.response.status_code if e.response else "?"
-#             if status == 404:
-#                 print("  404 (not found)")
-#             else:
-#                 print(f"  HTTP {status}: {e}")
-#         except Exception as e:
-#             print(f"  ERROR: {e}")
+                raise ValueError("Unary operator not allowed")
 
-#         time.sleep(1.5)
+            raise ValueError("Invalid expression")
 
-#     return reports
+        try:
+            tree = ast.parse(expression, mode="eval")
 
+            result = evaluate(tree)
 
-# def save_for_llm(reports: List[Dict], company_slug: str, year: int):
-#     """Export to JSONL (chunked) and plain text."""
-#     base = f"{company_slug}_{year}"
+            return {
+                "expression": expression,
+                "result": result,
+            }
 
-#     # JSONL — one JSON object per line, chunked for context windows
-#     with open(f"{base}.jsonl", "w", encoding="utf-8") as f:
-#         for r in reports:
-#             words = r["content"].split()
-#             chunk_size = 1000
-#             for i in range(0, len(words), chunk_size):
-#                 chunk = " ".join(words[i:i+chunk_size])
-#                 doc = {
-#                     "title": r["title"],
-#                     "company": company_slug.upper(),
-#                     "year": r["year"],
-#                     "doc_type": r["doc_type"],
-#                     "url": r["url"],
-#                     "chunk_index": i // chunk_size,
-#                     "text": chunk,
-#                 }
-#                 f.write(json.dumps(doc, ensure_ascii=False) + "\n")
+        except Exception as e:
+            return {
+                "expression": expression,
+                "error": str(e),
+            }
 
-#     # Plain text
-#     with open(f"{base}.txt", "w", encoding="utf-8") as f:
-#         for r in reports:
-#             f.write(f"\n\n{'='*60}\n")
-#             f.write(f"TITLE: {r['title']}\n")
-#             f.write(f"YEAR: {r['year']} | TYPE: {r['doc_type']}\n")
-#             f.write(f"URL: {r['url']}\n")
-#             f.write(f"{'='*60}\n\n")
-#             f.write(r["content"])
+    # =========================================================
+    # SYSTEM PROMPT
+    # =========================================================
 
-#     print(f"[SAVED] {base}.jsonl and {base}.txt")
+    def _build_input(self):
+        """
+        Always put the system prompt first.
 
+        Then append conversation history.
+        """
 
-# # ==================== USAGE ====================
+        return [
+            {
+                "role": "system",
+                "content": self.system_prompt,
+            },
+            *self.history,
+        ]
 
-# if __name__ == "__main__":
-#     # Example: Get Wemaba 2025 reports
-#     reports = get_company_reports("wemaba", year=2025)
+    # =========================================================
+    # TOOL EXECUTION
+    # =========================================================
 
-#     if reports:
-#         save_for_llm(reports, "wemaba", 2025)
-#         print(f"\nFetched {len(reports)} reports:")
-#         for r in reports:
-#             print(f"  - {r['doc_type']}: {r['word_count']} words")
-#     else:
-#         print("\nNo reports fetched.")
+    def _execute_tool(self, tool_call):
+
+        tool_name = tool_call.name
+
+        try:
+            arguments = json.loads(tool_call.arguments)
+        except json.JSONDecodeError:
+            return {
+                "error": "Invalid tool arguments"
+            }
+
+        print(f"\nTool: {tool_name}")
+        print(f"Arguments: {arguments}")
+
+        if tool_name not in self.available_tools:
+
+            return {
+                "error": f"Unknown tool: {tool_name}"
+            }
+
+        function = self.available_tools[tool_name]
+
+        try:
+            result = function(**arguments)
+
+            print(f"Result: {result}")
+
+            return result
+
+        except Exception as e:
+
+            return {
+                "error": str(e)
+            }
+
+    # =========================================================
+    # CHAT
+    # =========================================================
+
+    def chat(self, user_message: str) -> str:
+
+        # -----------------------------------------------------
+        # 1. Add user message to history
+        # -----------------------------------------------------
+
+        self.history.append(
+            {
+                "role": "user",
+                "content": user_message,
+            }
+        )
+
+        # -----------------------------------------------------
+        # 2. Ask model
+        # -----------------------------------------------------
+
+        response = self.client.responses.create(
+            model=self.model,
+            tools=self.tools,
+            input=self._build_input(),
+        )
+
+        # -----------------------------------------------------
+        # 3. Save model output
+        # -----------------------------------------------------
+
+        self.history.extend(response.output)
+
+        # -----------------------------------------------------
+        # 4. Execute tools
+        # -----------------------------------------------------
+
+        tool_calls = [
+            item
+            for item in response.output
+            if item.type == "function_call"
+        ]
+
+        if tool_calls:
+
+            for tool_call in tool_calls:
+
+                result = self._execute_tool(tool_call)
+
+                self.history.append(
+                    {
+                        "type": "function_call_output",
+                        "call_id": tool_call.call_id,
+                        "output": json.dumps(result),
+                    }
+                )
+
+            # -------------------------------------------------
+            # 5. Ask model again with tool results
+            # -------------------------------------------------
+
+            final_response = self.client.responses.create(
+                model=self.model,
+                tools=self.tools,
+                input=self._build_input(),
+            )
+
+            # Save final model output
+            self.history.extend(final_response.output)
+
+            return final_response.output_text
+
+        # -----------------------------------------------------
+        # 6. No tools were required
+        # -----------------------------------------------------
+
+        return response.output_text
+
+    # =========================================================
+    # HISTORY MANAGEMENT
+    # =========================================================
+
+    def get_history(self):
+        return self.history
+
+    def clear_history(self):
+        self.history = []
+
+    def get_system_prompt(self):
+        return self.system_prompt
+
+    def set_system_prompt(self, system_prompt: str):
+        self.system_prompt = system_prompt

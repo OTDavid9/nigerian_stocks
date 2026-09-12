@@ -39,10 +39,15 @@ from sklearn.metrics import (
     accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 )
 from sklearn.model_selection import TimeSeriesSplit
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # ---------------------------------------------------------------------
 # Optional gradient boosting
 # ---------------------------------------------------------------------
+
+ENV = os.getenv("ENVIRONMENT", "Prod")
 try:
     from xgboost import XGBRegressor, XGBClassifier
     XGB_AVAILABLE = True
@@ -336,10 +341,19 @@ class NGXStockAnalyzer:
 # 2. DATA FETCHING & CLEANING
 # =============================================================================
 def fetch_stock_data(symbol: str, range: str = "All") -> dict:
-    url = f"https://nigerian-stocks.onrender.com/api/v1/history/ngx/{symbol}?range={range}"
-    req = urllib.request.Request(url, headers={"accept": "application/json"})
-    with urllib.request.urlopen(req) as resp:
-        return json.loads(resp.read().decode())
+
+    if ENV.lower()=="dev":    
+        print(ENV)
+        url = f"http://localhost:8000/api/v1/history/ngx/{symbol}?range={range}"
+        req = urllib.request.Request(url, headers={"accept": "application/json"})
+        with urllib.request.urlopen(req) as resp:
+            print(f"Data Fetched successfully ! from {url}")
+            return json.loads(resp.read().decode())
+    else:
+        url = f"https://nigerian-stocks.onrender.com/api/v1/history/ngx/{symbol}?range={range}"
+        req = urllib.request.Request(url, headers={"accept": "application/json"})
+        with urllib.request.urlopen(req) as resp:
+            return json.loads(resp.read().decode())
 
 def clean_prices(raw_data: dict) -> Tuple[List[datetime], List[float]]:
     dates, closes = [], []

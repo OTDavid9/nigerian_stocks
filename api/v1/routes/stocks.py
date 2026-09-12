@@ -116,7 +116,14 @@ def is_ngx_open() -> bool:
 # ---------------------------------------------------------------------------
 # Scraper proxy builder
 # ---------------------------------------------------------------------------
+# def build_proxy_url(target_url: str) -> str:
+#     return f"http://api.scraperapi.com/?api_key={SCRAPER_API_KEY}&url={httpx.URL(target_url)}"
+
 def build_proxy_url(target_url: str) -> str:
+    """
+    Build a proxy URL for the ScraperAPI service.
+    Ensures the target URL is properly encoded.
+    """
     return f"http://api.scraperapi.com/?api_key={SCRAPER_API_KEY}&url={httpx.URL(target_url)}"
 
 # ---------------------------------------------------------------------------
@@ -232,16 +239,95 @@ def parse_highcharts_script(js_text: str) -> List[HistoricalDataPoint]:
     points.sort(key=lambda x: x.date)
     return points
 
-async def fetch_ngx_history(symbol: str) -> HistoricalData:
+# async def fetch_ngx_history(symbol: str) -> HistoricalData:
+#     symbol_upper = symbol.upper()
+#     cache_key = f"ngx_history_{symbol_upper}"
+#     cached = _cache_get(cache_key, max_age_seconds=86400)  # 24h
+#     if cached:
+#         return cached
+
+#     # 1. Try highcharts chart endpoint
+#     slug = "" if symbol_upper == "ASI" else f"/{symbol.lower()}"
+#     chart_url = f"{AF_BASE}/chart/ngx{slug}"
+#     print(f"[NGX] Trying chart endpoint for {symbol_upper}: {chart_url}")
+#     try:
+#         resp = await client.get(build_proxy_url(chart_url))
+#         js = resp.text
+#         points = parse_highcharts_script(js)
+#         if points:
+#             result = HistoricalData(symbol=symbol_upper, data=points)
+#             _cache_set(cache_key, result)
+#             return result
+#     except Exception as e:
+#         print(f"Chart fetch failed for {symbol_upper}: {e}")
+
+#     # 2. Fallback: HTML page with data-hist table
+#     page_url = f"{AF_BASE}/ngx/{symbol.lower()}.html"
+#     print(f"[NGX] Trying HTML fallback for {symbol_upper}: {page_url}")
+#     try:
+#         resp = await client.get(build_proxy_url(page_url))
+#         soup = BeautifulSoup(resp.text, "lxml")
+#         points: List[HistoricalDataPoint] = []
+#         table = soup.select_one("table[data-hist]")
+#         if table:
+#             for row in table.select("tbody tr"):
+#                 cells = row.find_all("td")
+#                 if len(cells) < 3:
+#                     continue
+#                 date_text = cells[0].get_text(strip=True)
+#                 volume_text = cells[1].get_text(strip=True).replace(",", "")
+#                 close_text = cells[2].get_text(strip=True)
+#                 try:
+#                     close = float(close_text)
+#                 except ValueError:
+#                     continue
+#                 if not re.match(r"^\d{4}-\d{2}-\d{2}$", date_text):
+#                     continue
+#                 points.append(HistoricalDataPoint(
+#                     date=date_text,
+#                     close=close,
+#                     volume=int(volume_text) if volume_text.isdigit() else None,
+#                 ))
+#         if points:
+#             points.sort(key=lambda x: x.date)
+#             result = HistoricalData(symbol=symbol_upper, data=points)
+#             _cache_set(cache_key, result)
+#             return result
+#     except Exception as e:
+#         print(f"HTML fallback failed for {symbol_upper}: {e}")
+
+#     # Return stale cache if exists
+#     stale = _cache_get(cache_key, max_age_seconds=99999)
+#     if stale:
+#         return stale
+
+#     raise HTTPException(status_code=404, detail=f"No data found for NGX symbol: {symbol_upper}")
+def filter_by_range(points: List[HistoricalDataPoint], range_str: str) -> List[HistoricalDataPoint]:
+    """Filter points to the last N years based on range string like '5y'."""
+    if not points or range_str is None:
+        return points
+    # Parse range (e.g., "5y" -> 5 years)
+    if range_str.endswith('y'):
+        years = int(range_str[:-1])
+        days = years * 365
+    else:
+        # Default to 5 years if unknown
+        days = 5 * 365
+    sorted_points = sorted(points, key=lambda x: x.date)
+    latest = datetime.strptime(sorted_points[-1].date, "%Y-%m-%d")
+    cutoff = latest - timedelta(days=days)
+    return [p for p in sorted_points if datetime.strptime(p.date, "%Y-%m-%d") >= cutoff]
+
+async def fetch_ngx_history(symbol: str, range: str = "5y") -> HistoricalData:
     symbol_upper = symbol.upper()
-    cache_key = f"ngx_history_{symbol_upper}"
-    cached = _cache_get(cache_key, max_age_seconds=86400)  # 24h
+    cache_key = f"ngx_history_{symbol_upper}_{range}"  # include range in cache key
+    cached = _cache_get(cache_key, max_age_seconds=86400)
     if cached:
         return cached
 
-    # 1. Try highcharts chart endpoint
+    # 1. Try highcharts chart endpoint with range parameter
     slug = "" if symbol_upper == "ASI" else f"/{symbol.lower()}"
-    chart_url = f"{AF_BASE}/chart/ngx{slug}"
+    chart_url = f"{AF_BASE}/chart/ngx{slug}?range={range}"   # <-- ADD RANGE
     print(f"[NGX] Trying chart endpoint for {symbol_upper}: {chart_url}")
     try:
         resp = await client.get(build_proxy_url(chart_url))
@@ -254,7 +340,7 @@ async def fetch_ngx_history(symbol: str) -> HistoricalData:
     except Exception as e:
         print(f"Chart fetch failed for {symbol_upper}: {e}")
 
-    # 2. Fallback: HTML page with data-hist table
+    # 2. Fallback: HTML page – we can't easily pass range to HTML, so we still filter after fetch
     page_url = f"{AF_BASE}/ngx/{symbol.lower()}.html"
     print(f"[NGX] Trying HTML fallback for {symbol_upper}: {page_url}")
     try:
@@ -283,13 +369,15 @@ async def fetch_ngx_history(symbol: str) -> HistoricalData:
                 ))
         if points:
             points.sort(key=lambda x: x.date)
-            result = HistoricalData(symbol=symbol_upper, data=points)
+            # After HTML fallback, filter to the last 5 years (or whatever range was requested)
+            filtered_points = filter_by_range(points, range)
+            result = HistoricalData(symbol=symbol_upper, data=filtered_points)
             _cache_set(cache_key, result)
             return result
     except Exception as e:
         print(f"HTML fallback failed for {symbol_upper}: {e}")
 
-    # Return stale cache if exists
+    # Stale cache – also filter
     stale = _cache_get(cache_key, max_age_seconds=99999)
     if stale:
         return stale
@@ -306,7 +394,7 @@ async def get_live_snapshot():
 @router.get("/history/ngx/{symbol}", response_model=HistoricalData)
 async def get_history(
     symbol: str,
-    range: Optional[str] = Query("All", description="Time range (currently unused)")
+    range: Optional[str] = Query("5y", description="Time range (currently unused)")
 ):
     return await fetch_ngx_history(symbol)
 

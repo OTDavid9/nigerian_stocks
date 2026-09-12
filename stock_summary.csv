@@ -1,26 +1,26 @@
 Ticker,Sector,Best_Reg_Model,MAPE,Best_Cls_Model,Accuracy,Forecast_Trend
-GTCO,Banking,Lasso,2.25,Logistic,0.5351,upward
-ZENITHBANK,Banking,ElasticNet,2.27,Logistic,0.541,upward
-UBA,Banking,Linear Reg,2.58,Logistic,0.5483,upward
-ACCESSCORP,Banking,Ridge,2.64,CatBoost,0.58,upward
-STANBIC,Banking,Lasso,2.02,CatBoost,0.8039,upward
-AIICO,Insurance,Linear Reg,3.6,Logistic,0.6317,upward
-MANSARD,Insurance,Ridge,3.35,CatBoost,0.7291,downward
-NEM,Insurance,Linear Reg,3.49,Logistic,0.7315,downward
-CUSTODIAN,Insurance,Linear Reg,2.47,Logistic,0.8196,upward
+GTCO,Banking,ERROR,,ERROR,,
+ZENITHBANK,Banking,ERROR,,ERROR,,
+UBA,Banking,ERROR,,ERROR,,
+ACCESSCORP,Banking,ERROR,,ERROR,,
+STANBIC,Banking,ERROR,,ERROR,,
+AIICO,Insurance,ERROR,,ERROR,,
+MANSARD,Insurance,ERROR,,ERROR,,
+NEM,Insurance,ERROR,,ERROR,,
+CUSTODIAN,Insurance,ERROR,,ERROR,,
 GUINEAINS,Insurance,ERROR,,ERROR,,
-NESTLE,Consumer Goods,Lasso,1.28,CatBoost,0.9093,downward
-DANGSUGAR,Consumer Goods,Lasso,2.81,Logistic,0.6976,upward
-UNILEVER,Consumer Goods,Lasso,2.43,Logistic,0.819,upward
-GUINNESS,Consumer Goods,Lasso,2.18,Logistic,0.878,upward
-NB,Consumer Goods,Lasso,2.84,GradBoost,0.7473,downward
-DANGCEM,Industrial Goods,Lasso,1.54,Logistic,0.8537,downward
-BUACEMENT,Industrial Goods,Lasso,1.54,RandomForest,0.9067,upward
+NESTLE,Consumer Goods,ERROR,,ERROR,,
+DANGSUGAR,Consumer Goods,ERROR,,ERROR,,
+UNILEVER,Consumer Goods,ERROR,,ERROR,,
+GUINNESS,Consumer Goods,ERROR,,ERROR,,
+NB,Consumer Goods,ERROR,,ERROR,,
+DANGCEM,Industrial Goods,ERROR,,ERROR,,
+BUACEMENT,Industrial Goods,ERROR,,ERROR,,
 WAPCO,Industrial Goods,ERROR,,ERROR,,
-BERGER,Industrial Goods,Lasso,1.91,CatBoost,0.9174,upward
-CAP,Industrial Goods,Lasso,1.81,CatBoost,0.921,downward
-SEPLAT,Oil & Gas,Lasso,1.49,Logistic,0.9233,upward
-OANDO,Oil & Gas,Lasso,4.22,Logistic,0.6044,downward
-TOTAL,Oil & Gas,Lasso,1.46,XGBoost,0.9585,upward
-CONOIL,Oil & Gas,Lasso,2.66,Logistic,0.9403,downward
-ARADEL,Oil & Gas,Lasso,4.46,Logistic,0.7917,upward
+BERGER,Industrial Goods,ERROR,,ERROR,,
+CAP,Industrial Goods,ERROR,,ERROR,,
+SEPLAT,Oil & Gas,ERROR,,ERROR,,
+OANDO,Oil & Gas,ERROR,,ERROR,,
+TOTAL,Oil & Gas,ERROR,,ERROR,,
+CONOIL,Oil & Gas,ERROR,,ERROR,,
+ARADEL,Oil & Gas,ERROR,,ERROR,,
